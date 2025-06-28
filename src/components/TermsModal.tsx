@@ -29,6 +29,10 @@ const TermsModal = ({ isOpen, onClose, onAccept }: TermsModalProps) => {
     }
   };
 
+  const handleCheckboxChange = (checked: boolean | "indeterminate") => {
+    setHasAccepted(checked === true);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -164,7 +168,7 @@ const TermsModal = ({ isOpen, onClose, onAccept }: TermsModalProps) => {
             <Checkbox 
               id="accept-terms"
               checked={hasAccepted}
-              onCheckedChange={setHasAccepted}
+              onCheckedChange={handleCheckboxChange}
               className="border-gold-DEFAULT data-[state=checked]:bg-gold-DEFAULT"
             />
             <label 

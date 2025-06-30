@@ -67,11 +67,10 @@ const Hero = () => {
       </div>
 
       <div className="relative z-10 container mx-auto px-4 py-16">
-        {/* Header */}
+        {/* Header - Fixed single line title */}
         <div className="text-center mb-16 animate-fade-in">
-          <h1 className="text-6xl md:text-8xl font-bold mb-6">
+          <h1 className="text-6xl md:text-8xl font-bold mb-6 flex items-center justify-center gap-4">
             <span className="luxury-text">SORTEO</span>
-            <br />
             <span className="text-white">VIP</span>
           </h1>
           <p className="text-xl md:text-2xl text-[#EFD09E] font-light max-w-2xl mx-auto">
@@ -106,63 +105,71 @@ const Hero = () => {
               </>
             )}
 
-            {/* Large Horizontal Card */}
+            {/* Large Horizontal Card - Fixed Height */}
             <div className="bg-[#1D1D1D] rounded-2xl border border-[#D4AA7D]/30 shadow-2xl overflow-hidden animate-fade-in">
-              <div className="grid md:grid-cols-2 gap-0 min-h-[500px]">
-                {/* Left Side - Product Image with Golden Glow */}
-                <div className="relative overflow-hidden bg-gradient-to-br from-[#2A2A2A] to-[#1D1D1D] flex items-center justify-center p-8">
+              <div className="flex flex-col md:flex-row h-auto md:h-[420px]">
+                {/* Left Side - Product Image with Golden Glow - Fixed Container */}
+                <div className="relative w-full md:w-1/2 h-64 md:h-full overflow-hidden bg-gradient-to-br from-[#2A2A2A] to-[#1D1D1D] flex items-center justify-center">
                   {/* Golden Glow Effect */}
                   <div className="absolute inset-0 bg-gradient-radial from-[#D4AA7D]/20 via-transparent to-transparent opacity-60"></div>
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-radial from-[#EFD09E]/30 via-[#D4AA7D]/10 to-transparent rounded-full blur-3xl"></div>
                   
-                  {/* Product Image */}
-                  <div className="relative z-10">
+                  {/* Product Image - Fixed sizing */}
+                  <div className="relative z-10 w-full h-full flex items-center justify-center p-4">
                     <img 
                       src={currentRaffle.image} 
                       alt={currentRaffle.prize}
-                      className="w-full max-w-md h-auto object-contain drop-shadow-2xl"
+                      className="max-w-full max-h-full object-contain drop-shadow-2xl"
                     />
-                  </div>
-
-                  {/* Price Badge */}
-                  <div className="absolute top-6 right-6 bg-gradient-to-r from-[#D4AA7D] to-[#EFD09E] text-[#1D1D1D] px-4 py-2 rounded-full font-bold text-lg shadow-lg">
-                    {currentRaffle.ticketPrice} Bs.
                   </div>
                 </div>
 
-                {/* Right Side - Raffle Information */}
-                <div className="p-8 md:p-12 flex flex-col justify-center">
-                  <h3 className="text-3xl md:text-4xl font-bold text-white mb-3">
-                    {currentRaffle.name}
-                  </h3>
-                  <p className="text-xl text-[#D4AA7D] mb-6 font-medium">
-                    {currentRaffle.subtitle}
-                  </p>
+                {/* Right Side - Raffle Information - Fixed Structure */}
+                <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center space-y-6">
+                  {/* Title and Subtitle */}
+                  <div>
+                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                      {currentRaffle.name}
+                    </h3>
+                    <p className="text-lg text-[#D4AA7D] font-medium">
+                      {currentRaffle.subtitle}
+                    </p>
+                  </div>
                   
                   {/* Time Remaining */}
-                  <div className="flex items-center gap-3 mb-6">
+                  <div className="flex items-center gap-3">
                     <Clock className="w-5 h-5 text-[#EFD09E]" />
                     <span className="text-[#EFD09E] text-lg font-medium">
                       Quedan: {currentRaffle.timeRemaining}
                     </span>
                   </div>
+
+                  {/* Ticket Price Section */}
+                  <div>
+                    <p className="text-[#D4AA7D] text-sm font-medium mb-2">
+                      Precio del ticket:
+                    </p>
+                    <div className="inline-block bg-gradient-to-r from-[#D4AA7D] to-[#EFD09E] text-[#1D1D1D] px-4 py-2 rounded-full font-bold text-lg shadow-lg">
+                      {currentRaffle.ticketPrice} Bs.
+                    </div>
+                  </div>
                   
                   {/* Participation Message */}
-                  <div className="bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-[#D4AA7D]/30 rounded-lg p-4 mb-8">
-                    <p className="text-[#EFD09E] font-medium text-center">
+                  <div className="bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-[#D4AA7D]/30 rounded-lg p-3">
+                    <p className="text-[#EFD09E] font-medium text-center text-sm">
                       ¡Aún tienes tiempo de participar!
                     </p>
                   </div>
                   
                   {/* Action Buttons */}
-                  <div className="space-y-4">
-                    <Button className="w-full bg-gradient-to-r from-[#D4AA7D] to-[#EFD09E] text-[#1D1D1D] hover:from-[#B8956A] hover:to-[#D4AA7D] font-bold py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                  <div className="space-y-3">
+                    <Button className="w-full bg-gradient-to-r from-[#D4AA7D] to-[#EFD09E] text-[#1D1D1D] hover:from-[#B8956A] hover:to-[#D4AA7D] font-bold py-3 text-base shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                       <Ticket className="w-5 h-5 mr-2" />
                       Comprar Boletos
                     </Button>
                     <Button 
                       variant="outline" 
-                      className="w-full border-[#D4AA7D] text-[#D4AA7D] hover:bg-[#D4AA7D]/10 py-4 text-lg font-medium"
+                      className="w-full border-[#D4AA7D] text-[#D4AA7D] hover:bg-[#D4AA7D]/10 py-3 text-base font-medium"
                     >
                       Ver Mis Boletos
                     </Button>

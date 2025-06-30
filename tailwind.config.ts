@@ -63,6 +63,7 @@ export default {
 				'luxury-gradient': 'linear-gradient(135deg, #272727 0%, #D4AA7D 50%, #EFD09E 100%)',
 				'gold-gradient': 'linear-gradient(135deg, #D4AA7D 0%, #EFD09E 100%)',
 				'dark-gradient': 'linear-gradient(135deg, #000000 0%, #272727 100%)',
+				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

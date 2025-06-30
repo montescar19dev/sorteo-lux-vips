@@ -1,45 +1,69 @@
 
-import React from 'react';
-import { Clock, Trophy, Ticket } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Clock, Trophy, Ticket, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Hero = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
   const activeRaffles = [
     {
       id: 1,
       name: "iPhone 15 Pro Max",
+      subtitle: "256GB - Titanio Natural",
       prize: "iPhone 15 Pro Max 256GB",
       endDate: "2024-07-15",
       image: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      ticketPrice: 25,
+      ticketPrice: 250,
       timeRemaining: "5 días, 12 horas"
     },
     {
       id: 2,
-      name: "MacBook Air M3",
-      prize: "MacBook Air M3 15 pulgadas",
+      name: "Toyota Land Cruiser Prado",
+      subtitle: "Modelo 2020",
+      prize: "Toyota Land Cruiser Prado 2020",
       endDate: "2024-07-20",
-      image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      ticketPrice: 50,
+      image: "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      ticketPrice: 500,
       timeRemaining: "10 días, 8 horas"
     },
     {
       id: 3,
-      name: "PlayStation 5",
-      prize: "PlayStation 5 con 2 controles",
+      name: "MacBook Pro M3",
+      subtitle: "16 pulgadas - 512GB",
+      prize: "MacBook Pro M3 16 pulgadas",
       endDate: "2024-07-25",
-      image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      ticketPrice: 30,
+      image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      ticketPrice: 400,
       timeRemaining: "15 días, 20 horas"
     }
   ];
+
+  // Auto-slide every 7 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % activeRaffles.length);
+    }, 7000);
+
+    return () => clearInterval(interval);
+  }, [activeRaffles.length]);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % activeRaffles.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + activeRaffles.length) % activeRaffles.length);
+  };
+
+  const currentRaffle = activeRaffles[currentSlide];
 
   return (
     <div className="relative min-h-screen bg-dark-gradient overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-gold-DEFAULT rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-40 h-40 bg-gold-light rounded-full blur-3xl"></div>
+        <div className="absolute top-20 left-10 w-32 h-32 bg-[#D4AA7D] rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-40 h-40 bg-[#EFD09E] rounded-full blur-3xl"></div>
       </div>
 
       <div className="relative z-10 container mx-auto px-4 py-16">
@@ -50,61 +74,119 @@ const Hero = () => {
             <br />
             <span className="text-white">VIP</span>
           </h1>
-          <p className="text-xl md:text-2xl text-gold-light font-light max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl text-[#EFD09E] font-light max-w-2xl mx-auto">
             Participa en sorteos exclusivos y gana increíbles premios. 
             Tu oportunidad de oro está aquí.
           </p>
         </div>
 
-        {/* Active Raffles Carousel */}
-        <div className="mb-16">
+        {/* Single Large Horizontal Raffle Card */}
+        <div className="mb-16 relative">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-            <span className="luxury-text">Sorteos Activos</span>
+            <span className="luxury-text">Sorteo Activo</span>
           </h2>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {activeRaffles.map((raffle, index) => (
-              <div 
-                key={raffle.id} 
-                className="luxury-card p-6 animate-slide-in hover:animate-glow group"
-                style={{ animationDelay: `${index * 0.2}s` }}
-              >
-                <div className="relative mb-6 overflow-hidden rounded-lg">
-                  <img 
-                    src={raffle.image} 
-                    alt={raffle.prize}
-                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute top-4 right-4 bg-primary/90 text-gold-light px-3 py-1 rounded-full text-sm font-bold">
-                    ${raffle.ticketPrice} USD
+          {/* Carousel Container */}
+          <div className="relative max-w-6xl mx-auto">
+            {/* Navigation Arrows */}
+            {activeRaffles.length > 1 && (
+              <>
+                <button
+                  onClick={prevSlide}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-[#D4AA7D]/20 hover:bg-[#D4AA7D]/40 backdrop-blur-sm border border-[#D4AA7D]/30 rounded-full p-3 transition-all duration-300 hover:scale-110"
+                >
+                  <ChevronLeft className="w-6 h-6 text-[#EFD09E]" />
+                </button>
+                <button
+                  onClick={nextSlide}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-[#D4AA7D]/20 hover:bg-[#D4AA7D]/40 backdrop-blur-sm border border-[#D4AA7D]/30 rounded-full p-3 transition-all duration-300 hover:scale-110"
+                >
+                  <ChevronRight className="w-6 h-6 text-[#EFD09E]" />
+                </button>
+              </>
+            )}
+
+            {/* Large Horizontal Card */}
+            <div className="bg-[#1D1D1D] rounded-2xl border border-[#D4AA7D]/30 shadow-2xl overflow-hidden animate-fade-in">
+              <div className="grid md:grid-cols-2 gap-0 min-h-[500px]">
+                {/* Left Side - Product Image with Golden Glow */}
+                <div className="relative overflow-hidden bg-gradient-to-br from-[#2A2A2A] to-[#1D1D1D] flex items-center justify-center p-8">
+                  {/* Golden Glow Effect */}
+                  <div className="absolute inset-0 bg-gradient-radial from-[#D4AA7D]/20 via-transparent to-transparent opacity-60"></div>
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-radial from-[#EFD09E]/30 via-[#D4AA7D]/10 to-transparent rounded-full blur-3xl"></div>
+                  
+                  {/* Product Image */}
+                  <div className="relative z-10">
+                    <img 
+                      src={currentRaffle.image} 
+                      alt={currentRaffle.prize}
+                      className="w-full max-w-md h-auto object-contain drop-shadow-2xl"
+                    />
+                  </div>
+
+                  {/* Price Badge */}
+                  <div className="absolute top-6 right-6 bg-gradient-to-r from-[#D4AA7D] to-[#EFD09E] text-[#1D1D1D] px-4 py-2 rounded-full font-bold text-lg shadow-lg">
+                    {currentRaffle.ticketPrice} Bs.
                   </div>
                 </div>
-                
-                <h3 className="text-xl font-bold text-primary mb-2">{raffle.name}</h3>
-                <p className="text-gray-600 mb-4">{raffle.prize}</p>
-                
-                <div className="flex items-center gap-2 mb-4 text-sm text-gray-500">
-                  <Clock className="w-4 h-4" />
-                  <span>Quedan: {raffle.timeRemaining}</span>
-                </div>
-                
-                <div className="bg-gradient-to-r from-red-500/10 to-orange-500/10 border border-orange-200 rounded-lg p-3 mb-4">
-                  <p className="text-sm text-orange-700 font-medium text-center">
-                    ¡Aún tienes tiempo de participar!
+
+                {/* Right Side - Raffle Information */}
+                <div className="p-8 md:p-12 flex flex-col justify-center">
+                  <h3 className="text-3xl md:text-4xl font-bold text-white mb-3">
+                    {currentRaffle.name}
+                  </h3>
+                  <p className="text-xl text-[#D4AA7D] mb-6 font-medium">
+                    {currentRaffle.subtitle}
                   </p>
-                </div>
-                
-                <div className="space-y-3">
-                  <Button className="w-full luxury-button">
-                    <Ticket className="w-4 h-4 mr-2" />
-                    Comprar Boletos
-                  </Button>
-                  <Button variant="outline" className="w-full border-gold-DEFAULT text-gold-dark hover:bg-gold-DEFAULT/10">
-                    Ver Mis Boletos
-                  </Button>
+                  
+                  {/* Time Remaining */}
+                  <div className="flex items-center gap-3 mb-6">
+                    <Clock className="w-5 h-5 text-[#EFD09E]" />
+                    <span className="text-[#EFD09E] text-lg font-medium">
+                      Quedan: {currentRaffle.timeRemaining}
+                    </span>
+                  </div>
+                  
+                  {/* Participation Message */}
+                  <div className="bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-[#D4AA7D]/30 rounded-lg p-4 mb-8">
+                    <p className="text-[#EFD09E] font-medium text-center">
+                      ¡Aún tienes tiempo de participar!
+                    </p>
+                  </div>
+                  
+                  {/* Action Buttons */}
+                  <div className="space-y-4">
+                    <Button className="w-full bg-gradient-to-r from-[#D4AA7D] to-[#EFD09E] text-[#1D1D1D] hover:from-[#B8956A] hover:to-[#D4AA7D] font-bold py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                      <Ticket className="w-5 h-5 mr-2" />
+                      Comprar Boletos
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="w-full border-[#D4AA7D] text-[#D4AA7D] hover:bg-[#D4AA7D]/10 py-4 text-lg font-medium"
+                    >
+                      Ver Mis Boletos
+                    </Button>
+                  </div>
                 </div>
               </div>
-            ))}
+            </div>
+
+            {/* Slide Indicators */}
+            {activeRaffles.length > 1 && (
+              <div className="flex justify-center gap-2 mt-6">
+                {activeRaffles.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSlide(index)}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                      index === currentSlide 
+                        ? 'bg-[#D4AA7D] shadow-lg' 
+                        : 'bg-[#D4AA7D]/30 hover:bg-[#D4AA7D]/60'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -115,11 +197,11 @@ const Hero = () => {
             <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">
               ¿Listo para Ganar?
             </h3>
-            <p className="text-xl text-gold-light mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-[#EFD09E] mb-8 max-w-2xl mx-auto">
               Únete a miles de participantes que ya han confiado en Sorteo VIP. 
               Tu premio te está esperando.
             </p>
-            <Button size="lg" className="bg-white text-primary hover:bg-gray-100 font-bold px-8 py-4 text-lg shadow-xl">
+            <Button size="lg" className="bg-white text-[#272727] hover:bg-gray-100 font-bold px-8 py-4 text-lg shadow-xl">
               <Trophy className="w-5 h-5 mr-2" />
               Participar Ahora
             </Button>

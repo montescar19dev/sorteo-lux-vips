@@ -85,20 +85,20 @@ const Hero = () => {
             <span className="luxury-text">Sorteo Activo</span>
           </h2>
           
-          {/* Carousel Container */}
+          {/* Carousel Container with External Navigation */}
           <div className="relative max-w-6xl mx-auto">
-            {/* Navigation Arrows */}
+            {/* Navigation Arrows - Outside the card */}
             {activeRaffles.length > 1 && (
               <>
                 <button
                   onClick={prevSlide}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-[#D4AA7D]/20 hover:bg-[#D4AA7D]/40 backdrop-blur-sm border border-[#D4AA7D]/30 rounded-full p-3 transition-all duration-300 hover:scale-110"
+                  className="absolute -left-16 top-1/2 -translate-y-1/2 z-20 bg-[#D4AA7D]/20 hover:bg-[#D4AA7D]/40 backdrop-blur-sm border border-[#D4AA7D]/30 rounded-full p-4 transition-all duration-300 hover:scale-110 shadow-lg hidden md:flex items-center justify-center"
                 >
                   <ChevronLeft className="w-6 h-6 text-[#EFD09E]" />
                 </button>
                 <button
                   onClick={nextSlide}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-[#D4AA7D]/20 hover:bg-[#D4AA7D]/40 backdrop-blur-sm border border-[#D4AA7D]/30 rounded-full p-3 transition-all duration-300 hover:scale-110"
+                  className="absolute -right-16 top-1/2 -translate-y-1/2 z-20 bg-[#D4AA7D]/20 hover:bg-[#D4AA7D]/40 backdrop-blur-sm border border-[#D4AA7D]/30 rounded-full p-4 transition-all duration-300 hover:scale-110 shadow-lg hidden md:flex items-center justify-center"
                 >
                   <ChevronRight className="w-6 h-6 text-[#EFD09E]" />
                 </button>
@@ -177,6 +177,24 @@ const Hero = () => {
                 </div>
               </div>
             </div>
+
+            {/* Mobile Navigation Arrows - Below card */}
+            {activeRaffles.length > 1 && (
+              <div className="flex justify-center gap-4 mt-6 md:hidden">
+                <button
+                  onClick={prevSlide}
+                  className="bg-[#D4AA7D]/20 hover:bg-[#D4AA7D]/40 backdrop-blur-sm border border-[#D4AA7D]/30 rounded-full p-3 transition-all duration-300 hover:scale-110 shadow-lg"
+                >
+                  <ChevronLeft className="w-6 h-6 text-[#EFD09E]" />
+                </button>
+                <button
+                  onClick={nextSlide}
+                  className="bg-[#D4AA7D]/20 hover:bg-[#D4AA7D]/40 backdrop-blur-sm border border-[#D4AA7D]/30 rounded-full p-3 transition-all duration-300 hover:scale-110 shadow-lg"
+                >
+                  <ChevronRight className="w-6 h-6 text-[#EFD09E]" />
+                </button>
+              </div>
+            )}
 
             {/* Slide Indicators */}
             {activeRaffles.length > 1 && (

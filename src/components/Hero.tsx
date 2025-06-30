@@ -23,7 +23,7 @@ const Hero = () => {
       subtitle: "Modelo 2020",
       prize: "Toyota Land Cruiser Prado 2020",
       endDate: "2024-07-20",
-      image: "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       ticketPrice: 500,
       timeRemaining: "10 días, 8 horas"
     },
@@ -59,29 +59,29 @@ const Hero = () => {
   const currentRaffle = activeRaffles[currentSlide];
 
   return (
-    <div className="relative min-h-screen bg-dark-gradient overflow-hidden">
+    <div className="relative h-screen bg-dark-gradient overflow-hidden flex flex-col justify-center">
       {/* Background decorative elements */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-20 left-10 w-32 h-32 bg-[#D4AA7D] rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-10 w-40 h-40 bg-[#EFD09E] rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 py-16">
-        {/* Header - Fixed single line title */}
-        <div className="text-center mb-16 animate-fade-in">
-          <h1 className="text-6xl md:text-8xl font-bold mb-6 flex items-center justify-center gap-4">
+      <div className="relative z-10 container mx-auto px-4 py-8">
+        {/* Header - Reduced size */}
+        <div className="text-center mb-8 animate-fade-in">
+          <h1 className="text-4xl md:text-6xl font-bold mb-3 flex items-center justify-center gap-3">
             <span className="luxury-text">SORTEO</span>
             <span className="text-white">VIP</span>
           </h1>
-          <p className="text-xl md:text-2xl text-[#EFD09E] font-light max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-[#EFD09E] font-light max-w-2xl mx-auto leading-relaxed">
             Participa en sorteos exclusivos y gana increíbles premios. 
             Tu oportunidad de oro está aquí.
           </p>
         </div>
 
         {/* Single Large Horizontal Raffle Card */}
-        <div className="mb-16 relative">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+        <div className="mb-8 relative">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-6">
             <span className="luxury-text">Sorteo Activo</span>
           </h2>
           
@@ -107,7 +107,7 @@ const Hero = () => {
 
             {/* Large Horizontal Card - Fixed Height */}
             <div className="bg-[#1D1D1D] rounded-2xl border border-[#D4AA7D]/30 shadow-2xl overflow-hidden animate-fade-in">
-              <div className="flex flex-col md:flex-row h-auto md:h-[420px]">
+              <div className="flex flex-col md:flex-row h-auto md:h-[350px]">
                 {/* Left Side - Product Image with Golden Glow - Fixed Container */}
                 <div className="relative w-full md:w-1/2 h-64 md:h-full overflow-hidden bg-gradient-to-br from-[#2A2A2A] to-[#1D1D1D] flex items-center justify-center">
                   {/* Golden Glow Effect */}
@@ -125,13 +125,13 @@ const Hero = () => {
                 </div>
 
                 {/* Right Side - Raffle Information - Fixed Structure */}
-                <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center space-y-6">
+                <div className="w-full md:w-1/2 p-6 flex flex-col justify-center space-y-4">
                   {/* Title and Subtitle */}
                   <div>
-                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
                       {currentRaffle.name}
                     </h3>
-                    <p className="text-lg text-[#D4AA7D] font-medium">
+                    <p className="text-base text-[#D4AA7D] font-medium">
                       {currentRaffle.subtitle}
                     </p>
                   </div>
@@ -139,7 +139,7 @@ const Hero = () => {
                   {/* Time Remaining */}
                   <div className="flex items-center gap-3">
                     <Clock className="w-5 h-5 text-[#EFD09E]" />
-                    <span className="text-[#EFD09E] text-lg font-medium">
+                    <span className="text-[#EFD09E] text-base font-medium">
                       Quedan: {currentRaffle.timeRemaining}
                     </span>
                   </div>
@@ -149,7 +149,7 @@ const Hero = () => {
                     <p className="text-[#D4AA7D] text-sm font-medium mb-2">
                       Precio del ticket:
                     </p>
-                    <div className="inline-block bg-gradient-to-r from-[#D4AA7D] to-[#EFD09E] text-[#1D1D1D] px-4 py-2 rounded-full font-bold text-lg shadow-lg">
+                    <div className="inline-block bg-gradient-to-r from-[#D4AA7D] to-[#EFD09E] text-[#1D1D1D] px-4 py-2 rounded-full font-bold text-base shadow-lg">
                       {currentRaffle.ticketPrice} Bs.
                     </div>
                   </div>
@@ -162,14 +162,14 @@ const Hero = () => {
                   </div>
                   
                   {/* Action Buttons */}
-                  <div className="space-y-3">
-                    <Button className="w-full bg-gradient-to-r from-[#D4AA7D] to-[#EFD09E] text-[#1D1D1D] hover:from-[#B8956A] hover:to-[#D4AA7D] font-bold py-3 text-base shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                      <Ticket className="w-5 h-5 mr-2" />
+                  <div className="space-y-2">
+                    <Button className="w-full bg-gradient-to-r from-[#D4AA7D] to-[#EFD09E] text-[#1D1D1D] hover:from-[#B8956A] hover:to-[#D4AA7D] font-bold py-2.5 text-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                      <Ticket className="w-4 h-4 mr-2" />
                       Comprar Boletos
                     </Button>
                     <Button 
                       variant="outline" 
-                      className="w-full border-[#D4AA7D] text-[#D4AA7D] hover:bg-[#D4AA7D]/10 py-3 text-base font-medium"
+                      className="w-full border-[#D4AA7D] text-[#D4AA7D] hover:bg-[#D4AA7D]/10 py-2.5 text-sm font-medium"
                     >
                       Ver Mis Boletos
                     </Button>
@@ -180,7 +180,7 @@ const Hero = () => {
 
             {/* Mobile Navigation Arrows - Below card */}
             {activeRaffles.length > 1 && (
-              <div className="flex justify-center gap-4 mt-6 md:hidden">
+              <div className="flex justify-center gap-4 mt-4 md:hidden">
                 <button
                   onClick={prevSlide}
                   className="bg-[#D4AA7D]/20 hover:bg-[#D4AA7D]/40 backdrop-blur-sm border border-[#D4AA7D]/30 rounded-full p-3 transition-all duration-300 hover:scale-110 shadow-lg"
@@ -198,7 +198,7 @@ const Hero = () => {
 
             {/* Slide Indicators */}
             {activeRaffles.length > 1 && (
-              <div className="flex justify-center gap-2 mt-6">
+              <div className="flex justify-center gap-2 mt-4">
                 {activeRaffles.map((_, index) => (
                   <button
                     key={index}
@@ -215,18 +215,18 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* CTA Section */}
+        {/* CTA Section - Reduced size */}
         <div className="text-center">
-          <div className="bg-luxury-gradient p-8 rounded-2xl shadow-2xl max-w-4xl mx-auto">
-            <Trophy className="w-16 h-16 text-white mx-auto mb-6" />
-            <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          <div className="bg-luxury-gradient p-6 rounded-2xl shadow-2xl max-w-4xl mx-auto">
+            <Trophy className="w-12 h-12 text-white mx-auto mb-4" />
+            <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
               ¿Listo para Ganar?
             </h3>
-            <p className="text-xl text-[#EFD09E] mb-8 max-w-2xl mx-auto">
+            <p className="text-lg text-[#EFD09E] mb-6 max-w-2xl mx-auto">
               Únete a miles de participantes que ya han confiado en Sorteo VIP. 
               Tu premio te está esperando.
             </p>
-            <Button size="lg" className="bg-white text-[#272727] hover:bg-gray-100 font-bold px-8 py-4 text-lg shadow-xl">
+            <Button size="lg" className="bg-white text-[#272727] hover:bg-gray-100 font-bold px-6 py-3 text-base shadow-xl">
               <Trophy className="w-5 h-5 mr-2" />
               Participar Ahora
             </Button>

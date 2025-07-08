@@ -4,10 +4,11 @@ import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { LogOut, Plus, Users, Trophy, CreditCard } from 'lucide-react';
+import { LogOut, Plus, Users, Trophy, CreditCard, ShoppingBag } from 'lucide-react';
 import RaffleManagement from '@/components/RaffleManagement';
 import UserManagement from '@/components/UserManagement';
 import TransactionViewer from '@/components/TransactionViewer';
+import PurchaseManagement from '@/components/PurchaseManagement';
 
 const AdminDashboard = () => {
   const { admin, logout } = useAdminAuth();
@@ -42,10 +43,14 @@ const AdminDashboard = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-5 mb-8">
             <TabsTrigger value="raffles" className="flex items-center gap-2">
               <Trophy className="h-4 w-4" />
               Sorteos
+            </TabsTrigger>
+            <TabsTrigger value="purchases" className="flex items-center gap-2">
+              <ShoppingBag className="h-4 w-4" />
+              Compras
             </TabsTrigger>
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
@@ -63,6 +68,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="raffles">
             <RaffleManagement />
+          </TabsContent>
+
+          <TabsContent value="purchases">
+            <PurchaseManagement />
           </TabsContent>
 
           <TabsContent value="users">

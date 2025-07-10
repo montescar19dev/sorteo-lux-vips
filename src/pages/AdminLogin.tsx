@@ -98,9 +98,6 @@ const AdminLogin = () => {
             </Button>
           </form>
           
-          <div className="mt-6 text-xs text-gray-500 text-center">
-            Demo: admin@sorteovip.com / admin123
-          </div>
         </CardContent>
       </Card>
     </div>

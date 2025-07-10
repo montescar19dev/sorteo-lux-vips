@@ -8,64 +8,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Search, Download, Filter } from 'lucide-react';
-
-interface Transaction {
-  id: string;
-  userId: string;
-  userName: string;
-  raffleId: string;
-  raffleTitle: string;
-  amount: number;
-  ticketCount: number;
-  status: 'completed' | 'pending' | 'failed';
-  paymentMethod: 'card' | 'transfer' | 'cash';
-  createdAt: string;
-  transactionId: string;
-}
+import { useQuery } from "@tanstack/react-query";
+import { fetchAllPurchases, Purchase } from "@/lib/api/purchase";
 
 const TransactionViewer = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>([
-    {
-      id: '1',
-      userId: '1',
-      userName: 'Juan Pérez',
-      raffleId: '1',
-      raffleTitle: 'Toyota Land Cruiser Prado 2024',
-      amount: 150,
-      ticketCount: 3,
-      status: 'completed',
-      paymentMethod: 'card',
-      createdAt: '2024-01-20T10:30:00Z',
-      transactionId: 'TXN-001',
-    },
-    {
-      id: '2',
-      userId: '2',
-      userName: 'María García',
-      raffleId: '2',
-      raffleTitle: 'iPhone 15 Pro Max',
-      amount: 100,
-      ticketCount: 4,
-      status: 'completed',
-      paymentMethod: 'transfer',
-      createdAt: '2024-01-19T15:45:00Z',
-      transactionId: 'TXN-002',
-    },
-    {
-      id: '3',
-      userId: '3',
-      userName: 'Carlos López',
-      raffleId: '1',
-      raffleTitle: 'Toyota Land Cruiser Prado 2024',
-      amount: 50,
-      ticketCount: 1,
-      status: 'pending',
-      paymentMethod: 'card',
-      createdAt: '2024-01-18T09:15:00Z',
-      transactionId: 'TXN-003',
-    },
-  ]);
-
   const [filters, setFilters] = useState({
     search: '',
     status: 'all',
@@ -74,71 +20,92 @@ const TransactionViewer = () => {
     dateTo: '',
   });
 
-  const filteredTransactions = transactions.filter(transaction => {
-    const matchesSearch = transaction.userName.toLowerCase().includes(filters.search.toLowerCase()) ||
-                         transaction.transactionId.toLowerCase().includes(filters.search.toLowerCase());
-    const matchesStatus = filters.status === 'all' || transaction.status === filters.status;
-    const matchesPayment = filters.paymentMethod === 'all' || transaction.paymentMethod === filters.paymentMethod;
-    
-    return matchesSearch && matchesStatus && matchesPayment;
+  const { data: transactions = [], isLoading, error } = useQuery<Purchase[]>({
+    queryKey: ["purchases"],
+    queryFn: fetchAllPurchases,
   });
 
-  const getStatusBadge = (status: string) => {
-    const variants = {
-      completed: 'bg-green-500',
-      pending: 'bg-yellow-500',
-      failed: 'bg-red-500',
-    };
-    return <Badge className={variants[status as keyof typeof variants]}>{status}</Badge>;
+  if (isLoading) {
+    return <p className="text-center text-gray-500">Cargando transacciones...</p>;
+  }
+
+if (error) {
+  return <p className="text-center text-red-500">Error al cargar transacciones.</p>;
+}
+
+const filteredTransactions = transactions.filter(transaction => {
+  const searchMatch =
+    transaction.userId.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+    transaction.transactionId.toLowerCase().includes(filters.search.toLowerCase());
+
+  const statusMatch = filters.status === 'all' || transaction.status === filters.status;
+
+  const paymentMatch = filters.paymentMethod === 'all' || transaction.paymentMethod === filters.paymentMethod;
+
+  const dateFromMatch = !filters.dateFrom || new Date(transaction.createdAt) >= new Date(filters.dateFrom);
+
+  const dateToMatch = !filters.dateTo || new Date(transaction.createdAt) <= new Date(filters.dateTo + 'T23:59:59');
+
+  return searchMatch && statusMatch && paymentMatch && dateFromMatch && dateToMatch;
+});
+
+
+const getStatusBadge = (status: string) => {
+  const variants = {
+    completed: 'bg-green-500',
+    pending: 'bg-yellow-500',
+    failed: 'bg-red-500',
   };
+  return <Badge className={variants[status as keyof typeof variants]}>{status}</Badge>;
+};
 
-  const getPaymentMethodBadge = (method: string) => {
-    const variants = {
-      card: 'bg-blue-500',
-      transfer: 'bg-purple-500',
-      cash: 'bg-gray-500',
-    };
-    return <Badge className={variants[method as keyof typeof variants]}>{method}</Badge>;
+const getPaymentMethodBadge = (method: string) => {
+  const variants = {
+    card: 'bg-blue-500',
+    transfer: 'bg-purple-500',
+    cash: 'bg-gray-500',
   };
+  return <Badge className={variants[method as keyof typeof variants]}>{method}</Badge>;
+};
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('es-ES', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
 
-  const totalRevenue = filteredTransactions
-    .filter(t => t.status === 'completed')
-    .reduce((sum, t) => sum + t.amount, 0);
+const totalRevenue = filteredTransactions
+  .filter(t => t.status === 'completed')
+  .reduce((sum, t) => sum + t.amount, 0);
 
-  const handleExport = () => {
-    const csvContent = [
-      ['ID', 'Usuario', 'Sorteo', 'Monto', 'Boletos', 'Estado', 'Método', 'Fecha'].join(','),
-      ...filteredTransactions.map(t => [
-        t.transactionId,
-        t.userName,
-        t.raffleTitle,
-        t.amount,
-        t.ticketCount,
-        t.status,
-        t.paymentMethod,
-        formatDate(t.createdAt)
-      ].join(','))
-    ].join('\n');
+const handleExport = () => {
+  const csvContent = [
+    ['ID', 'Usuario', 'Sorteo', 'Monto', 'Boletos', 'Estado', 'Método', 'Fecha'].join(','),
+    ...filteredTransactions.map(t => [
+      t.transactionId,
+      t.userId.name,
+      t.raffleId.title,
+      t.amount,
+      t.ticketCount,
+      t.status,
+      t.paymentMethod,
+      formatDate(t.createdAt)
+    ].join(','))
+  ].join('\n');
 
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'transacciones.csv';
-    a.click();
-  };
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'transacciones.csv';
+  a.click();
+};
 
-  return (
+return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold luxury-text">Transacciones</h2>
@@ -270,10 +237,10 @@ const TransactionViewer = () => {
             </TableHeader>
             <TableBody>
               {filteredTransactions.map((transaction) => (
-                <TableRow key={transaction.id}>
+                <TableRow key={transaction._id}>
                   <TableCell className="font-mono text-sm">{transaction.transactionId}</TableCell>
-                  <TableCell className="font-medium">{transaction.userName}</TableCell>
-                  <TableCell className="max-w-xs truncate">{transaction.raffleTitle}</TableCell>
+                  <TableCell className="font-medium">{transaction.userId.name}</TableCell>
+                  <TableCell className="max-w-xs truncate">{transaction.raffleId.title}</TableCell>
                   <TableCell className="font-bold">${transaction.amount}</TableCell>
                   <TableCell>{transaction.ticketCount}</TableCell>
                   <TableCell>{getStatusBadge(transaction.status)}</TableCell>

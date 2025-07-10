@@ -128,7 +128,7 @@ const PurchaseManagement = () => {
           </div>
           <select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as any)}
+            onChange={(e) => setStatusFilter(e.target.value as 'all' | 'pending' | 'verified' | 'rejected')}
             className="px-3 py-2 border rounded-md"
           >
             <option value="all">Todos</option>

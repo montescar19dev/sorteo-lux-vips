@@ -5,9 +5,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
+interface TicketType {
+  id: number;
+  raffleId: number;
+  raffleName: string;
+  ticketNumbers: string[];
+  purchaseDate: string;
+  status: string;
+  prizeImage: string;
+}
+
 const CheckTickets = () => {
   const [searchValue, setSearchValue] = useState('');
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<TicketType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 

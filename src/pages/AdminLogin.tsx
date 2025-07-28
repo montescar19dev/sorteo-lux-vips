@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAdminAuth } from '@/contexts/AdminAuthContext';
+import { useAdminAuth } from '@/contexts/useAdminAuth';
 import { Eye, EyeOff, Shield } from 'lucide-react';
 
 const AdminLogin = () => {

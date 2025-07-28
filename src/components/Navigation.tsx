@@ -1,17 +1,20 @@
-
-import React from 'react';
-import { Ticket, Search, Trophy } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { Ticket, Search, Trophy } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface NavigationProps {
   onCheckTickets: () => void;
+  onParticipateClick: () => void;
 }
 
-const Navigation = ({ onCheckTickets }: NavigationProps) => {
+const Navigation = ({
+  onCheckTickets,
+  onParticipateClick,
+}: NavigationProps) => {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -29,20 +32,20 @@ const Navigation = ({ onCheckTickets }: NavigationProps) => {
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center gap-6">
-            <button 
-              onClick={() => scrollToSection('hero')}
+            <button
+              onClick={() => scrollToSection("hero")}
               className="text-primary hover:text-gold-DEFAULT transition-colors font-medium"
             >
               Inicio
             </button>
-            <button 
-              onClick={() => scrollToSection('active-raffles')}
+            <button
+              onClick={() => scrollToSection("active-raffles")}
               className="text-primary hover:text-gold-DEFAULT transition-colors font-medium"
             >
               Sorteos Activos
             </button>
-            <button 
-              onClick={() => scrollToSection('past-raffles')}
+            <button
+              onClick={() => scrollToSection("past-raffles")}
               className="text-primary hover:text-gold-DEFAULT transition-colors font-medium"
             >
               Ganadores
@@ -51,19 +54,16 @@ const Navigation = ({ onCheckTickets }: NavigationProps) => {
 
           {/* Action Buttons */}
           <div className="flex items-center gap-3">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={onCheckTickets}
               className="border-gold-DEFAULT text-gold-dark hover:bg-gold-DEFAULT/10"
             >
               <Search className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">Mis Boletos</span>
             </Button>
-            
-            <Button 
-              onClick={() => scrollToSection('active-raffles')}
-              className="luxury-button"
-            >
+
+            <Button onClick={onParticipateClick} className="luxury-button">
               <Ticket className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">Participar</span>
             </Button>

@@ -1,25 +1,43 @@
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, DollarSign } from "lucide-react";
+import BuyTicketsButton from "../BuyTicketsButton";
 
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Calendar, DollarSign, Users, Trophy } from 'lucide-react';
-import BuyTicketsButton from '../BuyTicketsButton';
-
-const HeroExample = () => {
+const HeroExample: React.FC = () => {
   // Mock raffle data
   const currentRaffle = {
-    id: '1',
-    title: 'Toyota Land Cruiser Prado 2024',
-    description: 'SUV de lujo completamente equipado con todas las comodidades',
+    id: "1",
+    title: "Toyota Land Cruiser Prado 2024",
+    description: "SUV de lujo completamente equipado con todas las comodidades",
     ticketPrice: 50,
     totalTickets: 1000,
-    soldTickets: 750,
-    endDate: '2024-12-31',
-    image: '/placeholder.svg',
-    status: 'active' as const
+    ticketsSold: 750,
+    endDate: "2024-12-31",
+    image: "/placeholder.svg",
+    status: "active" as "active" | "paused" | "ended" | "closed",
   };
 
-  const progress = (currentRaffle.soldTickets / currentRaffle.totalTickets) * 100;
+  // Calculamos el progreso de venta
+  const progress =
+    (currentRaffle.ticketsSold / currentRaffle.totalTickets) * 100;
+
+  // Mapa de estados para etiqueta y color de badge
+  const statusMap: Record<
+    "active" | "paused" | "ended" | "closed",
+    { label: string; className: string }
+  > = {
+    active: { label: "Activo", className: "bg-green-500" },
+    paused: { label: "Pausado", className: "bg-yellow-500" },
+    ended: { label: "ended", className: "bg-blue-500" },
+    closed: { label: "Cerrado", className: "bg-gray-500" },
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#272727] to-[#1a1a1a] flex items-center justify-center p-4">
@@ -41,9 +59,15 @@ const HeroExample = () => {
               alt={currentRaffle.title}
               className="w-full h-64 lg:h-80 object-cover rounded-xl shadow-2xl"
             />
-            <Badge className="absolute top-4 right-4 bg-green-500 text-white">
-              {currentRaffle.status === 'active' ? 'Activo' : 'Finalizado'}
-            </Badge>
+            {/* Badge dinámico según estado */}
+            {(() => {
+              const { label, className } = statusMap[currentRaffle.status];
+              return (
+                <Badge className={`absolute top-4 right-4 ${className} text-white`}>
+                  {label}
+                </Badge>
+              );
+            })()}
           </div>
 
           {/* Raffle Details */}
@@ -78,7 +102,7 @@ const HeroExample = () => {
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm text-gray-600">Progreso</span>
                   <span className="text-sm font-medium">
-                    {currentRaffle.soldTickets}/{currentRaffle.totalTickets}
+                    {currentRaffle.ticketsSold}/{currentRaffle.totalTickets}
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
@@ -98,7 +122,7 @@ const HeroExample = () => {
                   raffleTitle={currentRaffle.title}
                   ticketPrice={currentRaffle.ticketPrice}
                   maxTickets={10}
-                  disabled={currentRaffle.status !== 'active'}
+                  disabled={currentRaffle.status !== "active"}
                 />
               </div>
             </CardContent>

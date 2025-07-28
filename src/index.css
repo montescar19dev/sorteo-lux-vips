@@ -1,7 +1,10 @@
-
 @tailwind base;
+@import "react-image-crop/dist/ReactCrop.css";
 @tailwind components;
 @tailwind utilities;
+
+/* …el resto de tus estilos… */
+
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
 

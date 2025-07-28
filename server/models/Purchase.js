@@ -1,15 +1,18 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const purchaseSchema = new mongoose.Schema(
   {
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+    fullName: {
+      type: String,
+      required: true,
+    },
+    phoneNumber: {
+      type: String,
       required: true,
     },
     raffleId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Raffle',
+      ref: "Raffle",
       required: true,
     },
     amount: {
@@ -22,21 +25,31 @@ const purchaseSchema = new mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ['card', 'transfer', 'cash'],
+      enum: ["card", "transfer", "cash"],
       required: true,
     },
     status: {
       type: String,
-      enum: ['completed', 'pending', 'failed'],
-      default: 'pending',
+      enum: ["completed", "pending", "failed"],
+      default: "pending",
     },
     transactionId: {
       type: String,
       required: true,
       unique: true,
     },
+    ticketNumbers: {
+      type: [String],
+      default: [],
+    },
+    receiptUrl: {
+      type: String,
+    },
+    receiptPublicId: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
 
-export default mongoose.model('Purchase', purchaseSchema);
+export default mongoose.model("Purchase", purchaseSchema);

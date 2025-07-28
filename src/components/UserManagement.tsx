@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { useAdminAuth } from '@/contexts/AdminAuthContext';
+import { useAdminAuth } from '@/contexts/useAdminAuth';
 import { Plus, Edit, Trash2, Shield } from 'lucide-react';
 
 interface User {

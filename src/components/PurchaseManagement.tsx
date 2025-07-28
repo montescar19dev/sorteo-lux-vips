@@ -1,5 +1,8 @@
 
 import React, { useState } from 'react';
+import { Purchase } from "@/types/Purchase";
+import { useAdminAuth } from "@/contexts/useAdminAuth";
+import { usePurchases } from "@/api/usePurchases";
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,21 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { CheckCircle, XCircle, Eye, Search, Filter } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-interface Purchase {
-  id: string;
-  fullName: string;
-  idType: 'V' | 'E';
-  idNumber: string;
-  phone: string;
-  email: string;
-  raffleTitle: string;
-  ticketNumbers: string[];
-  amount: number;
-  reference: string;
-  screenshot: string;
-  status: 'pending' | 'verified' | 'rejected';
-  createdAt: string;
-}
+
 
 const PurchaseManagement = () => {
   const { toast } = useToast();
@@ -32,44 +21,31 @@ const PurchaseManagement = () => {
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'verified' | 'rejected'>('all');
   const [selectedPurchase, setSelectedPurchase] = useState<Purchase | null>(null);
   
-  // Mock data - in real app this would come from backend
-  const [purchases, setPurchases] = useState<Purchase[]>([
-    {
-      id: '1',
-      fullName: 'Juan Pérez',
-      idType: 'V',
-      idNumber: '12345678',
-      phone: '04121234567',
-      email: 'juan@example.com',
-      raffleTitle: 'Toyota Land Cruiser Prado 2024',
-      ticketNumbers: ['1234', '5678'],
-      amount: 100,
-      reference: 'REF123456789',
-      screenshot: 'screenshot1.jpg',
-      status: 'pending',
-      createdAt: '2024-01-15 10:30:00',
-    },
-    {
-      id: '2',
-      fullName: 'María García',
-      idType: 'V',
-      idNumber: '87654321',
-      phone: '04167891234',
-      email: 'maria@example.com',
-      raffleTitle: 'iPhone 15 Pro Max',
-      ticketNumbers: ['9876'],
-      amount: 25,
-      reference: 'REF987654321',
-      screenshot: 'screenshot2.jpg',
-      status: 'verified',
-      createdAt: '2024-01-14 15:45:00',
-    },
-  ]);
+  const { token } = useAdminAuth();
+const purchaseQuery = usePurchases(token);
+const [purchases, setPurchases] = useState<Purchase[]>([]);
+const isLoading = purchaseQuery?.isLoading;
+const isError = purchaseQuery?.isError;
+
+// Sync purchases state with fetched data
+React.useEffect(() => {
+  if (purchaseQuery?.data) {
+    setPurchases(purchaseQuery.data);
+  }
+}, [purchaseQuery?.data]);
+
+if (isLoading) return <p className="text-sm text-gray-400">Cargando compras...</p>;
+if (isError) return <p className="text-sm text-red-500">Error al cargar las compras.</p>;
+
 
   const filteredPurchases = purchases.filter(purchase => {
-    const matchesSearch = purchase.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         purchase.phone.includes(searchTerm) ||
-                         purchase.reference.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (
+      (
+        ((purchase.name || '').toLowerCase().includes(searchTerm.toLowerCase()))
+      ) ||
+      purchase.phone.includes(searchTerm) ||
+      purchase.reference.toLowerCase().includes(searchTerm.toLowerCase())
+    );
     
     const matchesStatus = statusFilter === 'all' || purchase.status === statusFilter;
     
@@ -197,7 +173,7 @@ const PurchaseManagement = () => {
                 <TableRow key={purchase.id}>
                   <TableCell>
                     <div>
-                      <div className="font-medium">{purchase.fullName}</div>
+                      <div className="font-medium">{purchase.name}</div>
                       <div className="text-sm text-gray-600">
                         {purchase.idType}-{purchase.idNumber}
                       </div>

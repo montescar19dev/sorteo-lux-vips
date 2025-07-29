@@ -1,14 +1,12 @@
 export interface Purchase {
-  id: string;
-  name: string;
-  idType: 'V' | 'E';
-  idNumber: string;
-  phone: string;
-  raffleTitle: string;
-  ticketNumbers: string[];
+  _id: string;
+  fullName: string;
+  phoneNumber: string;
+  raffleId: string | { _id: string; title: string };
   amount: number;
-  reference: string;
-  screenshot: string;
-  status: 'pending' | 'verified' | 'rejected';
+  status: 'pending' | 'verified' | 'rejected' | 'failed' | 'completed';
+  transactionId: string;
+  receiptUrl: string;
+  ticketNumbers: string[];
   createdAt: string;
 }

@@ -96,7 +96,7 @@ const PastRaffles = () => {
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                    ended
+                    Finalizado
                   </div>
                 </div>
 
@@ -196,7 +196,7 @@ const PastRaffles = () => {
             />
             <Button
               onClick={closeWinnerModal}
-              className="absolute top-2 right-2"
+              className="absolute top-2 right-2 bg-white text-[#272727] hover:bg-gray-100 font-medium px-3 py-1 rounded shadow"
             >
               Cerrar
             </Button>

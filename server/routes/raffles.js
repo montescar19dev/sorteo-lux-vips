@@ -106,7 +106,7 @@ router.delete("/:id", authMiddleware, async (req, res) => {
   }
 });
 
-/// ─── Actualizar rifa existente ─────────────────────────────────────────────
+// ─── Actualizar rifa existente ─────────────────────────────────────────────
 router.put(
   "/:id",
   authMiddleware,
@@ -117,8 +117,6 @@ router.put(
   async (req, res) => {
     try {
       const { id } = req.params;
-
-      // Preparamos los datos a actualizar de forma opcional
       const updateData = {};
 
       // — Título —
@@ -173,20 +171,19 @@ router.put(
         updateData.status = req.body.status;
       }
 
-      // — Permitir asignar ganador —
+      // — Permitir asignar ganador (nombre) —
       if (req.body.winner) {
         updateData.winner = req.body.winner;
       }
 
-      // — Permitir subir foto del ganador —
-      if (req.files && req.files.winnerImage) {
-        // multer+cloudinary expone un array bajo la key winnerImage
-        updateData.winnerImage = req.files.winnerImage[0].path;
+      // — Si subieron nueva imagen de premio —
+      if (req.files?.prizeImage?.[0]) {
+        updateData.imageUrl = req.files.prizeImage[0].path;
       }
 
-      // — Si subieron nueva imagen, la usamos —
-      if (req.file) {
-        updateData.imageUrl = req.file.path;
+      // — Si subieron foto del ganador —
+      if (req.files?.winnerImage?.[0]) {
+        updateData.winnerImage = req.files.winnerImage[0].path;
       }
 
       // Ejecutamos la actualización y devolvemos el documento nuevo
@@ -204,5 +201,6 @@ router.put(
   }
 );
 // ─────────────────────────────────────────────────────────────────────────────
+
 
 export default router;

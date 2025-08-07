@@ -1,14 +1,10 @@
-import React, {
-  useState,
-  useEffect,
-  forwardRef,
-  useImperativeHandle,
-} from "react";
+/* Código actualizado de Hero.tsx con los cambios aplicados */
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from "react";
+import { useNavigate } from 'react-router-dom';
 import { Clock, Trophy, Ticket, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PaymentWizard from "@/components/PaymentWizard";
 import { Raffle } from "@/types/Raffle";
-
 
 interface HeroProps {
   raffles: Raffle[];
@@ -16,9 +12,9 @@ interface HeroProps {
 
 const Hero = forwardRef(({ raffles }: HeroProps, ref) => {
   const [currentSlide, setCurrentSlide] = useState(0);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRaffle, setSelectedRaffle] = useState<Raffle | null>(null);
+  const navigate = useNavigate();
 
   // Auto-slide every 7 seconds
   useEffect(() => {
@@ -191,7 +187,7 @@ const Hero = forwardRef(({ raffles }: HeroProps, ref) => {
                   <div className="space-y-3">
                     <Button
                       onClick={() => openPurchaseModalForRaffle(currentRaffle)}
-                      className="w-full bg-gradient-to-r from-[#FFD700] to-[#e3ab02] text-[#1D1D1D] hover:…"
+                      className="w-full bg-gradient-to-r from-[#FFD700] to-[#e3ab02] text-[#1D1D1D] hover:..."
                       disabled={currentRaffle.status !== "active"}
                     >
                       <Ticket className="w-5 h-5 mr-2" />
@@ -205,6 +201,7 @@ const Hero = forwardRef(({ raffles }: HeroProps, ref) => {
                     <Button
                       variant="outline"
                       className="w-full border-[#FFD700] text-black hover:bg-[#FFD700]/100 py-3 text-base font-medium"
+                      onClick={() => navigate('/check-tickets')}
                     >
                       Ver Mis Boletos
                     </Button>
@@ -252,26 +249,25 @@ const Hero = forwardRef(({ raffles }: HeroProps, ref) => {
 
         {/* CTA Section */}
         <div className="text-center">
-  <div className="relative max-w-4xl mx-auto rounded-2xl overflow-hidden border-[1px] border-[#FFD700] p-8 bg-transparent">
-    <Trophy className="w-16 h-16 text-[#FFD700] mx-auto mb-6" />
-    <h3 className="text-3xl md:text-4xl font-bold text-[#ffffff] mb-4">
-      ¿Listo para Ganar?
-    </h3>
-    <p className="text-xl text-white mb-8 max-w-2xl mx-auto">
-      Únete a miles de participantes que ya han confiado en Sorteo VIP.
-      Tu premio te está esperando.
-    </p>
-    <Button
-      onClick={() => openPurchaseModal(undefined)}
-      size="lg"
-      className="bg-white text-[#272727] hover:bg-gray-100 font-bold px-8 py-4 text-lg shadow-xl"
-    >
-      <Trophy className="w-5 h-5 mr-2" />
-      Participar Ahora
-    </Button>
-  </div>
-</div>
-
+          <div className="relative max-w-4xl mx-auto rounded-2xl overflow-hidden border-[1px] border-[#FFD700] p-8 bg-transparent">
+            <Trophy className="w-16 h-16 text-[#FFD700] mx-auto mb-6" />
+            <h3 className="text-3xl md:text-4xl font-bold text-[#ffffff] mb-4">
+              ¿Listo para Ganar?
+            </h3>
+            <p className="text-xl text-white mb-8 max-w-2xl mx-auto">
+              Únete a miles de participantes que ya han confiado en Sorteo VIP.
+              Tu premio te está esperando.
+            </p>
+            <Button
+              onClick={() => openPurchaseModal(undefined)}
+              size="lg"
+              className="bg-white text-[#272727] hover:bg-gray-100 font-bold px-8 py-4 text-lg shadow-xl"
+            >
+              <Trophy className="w-5 h-5 mr-2" />
+              Participar Ahora
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,9 +1,10 @@
-
 import React, { useState } from 'react';
 import { Search, Ticket, Clock, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/components/ui/use-toast';
+import axios from 'axios';
 
 interface TicketType {
   id: number;
@@ -20,54 +21,52 @@ const CheckTickets = () => {
   const [searchResults, setSearchResults] = useState<TicketType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
-
-  // Mock data for demonstration
-  const mockTickets = [
-    {
-      id: 1,
-      raffleId: 1,
-      raffleName: "iPhone 15 Pro Max",
-      ticketNumbers: ["0123", "0456", "0789"],
-      purchaseDate: "2024-06-28",
-      status: "active",
-      prizeImage: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-    },
-    {
-      id: 2,
-      raffleId: 3,
-      raffleName: "PlayStation 5",
-      ticketNumbers: ["1234", "5678"],
-      purchaseDate: "2024-06-25",
-      status: "active",
-      prizeImage: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-    }
-  ];
+  const { toast } = useToast();
 
   const handleSearch = async () => {
-    if (!searchValue.trim()) return;
-    
+    if (!searchValue.trim()) {
+      toast({
+        title: "Error",
+        description: "Por favor, ingresa una cédula, teléfono o email válido.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     setHasSearched(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      // Mock search logic - in real app this would be an API call
-      const results = mockTickets.filter(ticket => 
-        searchValue.includes("12345678") || // Mock phone number
-        searchValue.includes("test@example.com") || // Mock email
-        searchValue.includes("12345678") // Mock ID
-      );
+
+    try {
+      const response = await axios.get('/api/tickets/search', {
+        params: { query: searchValue.trim() },
+      });
+      const results: TicketType[] = response.data;
       
+      if (results.length === 0) {
+        toast({
+          title: "Sin resultados",
+          description: "No se encontraron boletos con esta información.",
+        });
+      }
       setSearchResults(results);
+    } catch (error) {
+      console.error("Error al buscar boletos:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo conectar con el servidor. Intenta de nuevo más tarde.",
+        variant: "destructive",
+      });
+      setSearchResults([]);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-ES', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
@@ -214,22 +213,6 @@ const CheckTickets = () => {
                 </div>
               )}
             </div>
-          )}
-
-          {/* Demo Instructions */}
-          {!hasSearched && (
-            <Card className="luxury-card mt-8">
-              <CardContent className="py-6 text-center">
-                <p className="text-sm text-gray-600 mb-2">
-                  <strong>Demo:</strong> Para probar la funcionalidad, usa:
-                </p>
-                <div className="space-y-1 text-sm text-gray-500">
-                  <p>• Cédula: 12345678</p>
-                  <p>• Email: test@example.com</p>
-                  <p>• Teléfono: 04121234567</p>
-                </div>
-              </CardContent>
-            </Card>
           )}
         </div>
       </div>

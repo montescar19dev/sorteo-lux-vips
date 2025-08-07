@@ -48,7 +48,7 @@ const TransactionViewer = () => {
   } = useQuery<Purchase[]>({
     queryKey: ["transactions", token],
     queryFn: async () => {
-      const response = await fetch("http://localhost:5000/api/purchase", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/purchase`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -37,7 +37,7 @@ export const useCreatePurchase = () => {
         console.log("   ", k, v);
       }
 
-      const response = await fetch("http://localhost:5000/api/purchases", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/purchases`, {
         method: "POST",
         body: formData,
       });

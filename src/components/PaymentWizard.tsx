@@ -156,7 +156,7 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
   useEffect(() => {
     const fetchRate = async () => {
       try {
-        const resp = await fetch("http://localhost:5000/api/rates/usd-bcv");
+        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/rates/usd-bcv`);
         const json = await resp.json();
         if (json.success && typeof json.rate === "number") {
           setUsdRate(json.rate);

@@ -9,7 +9,7 @@ export const usePurchases = (token: string | null) => {
   queryFn: async () => {
     console.log("📡 Fetch ejecutado con token:", token);
 
-    const response = await fetch("http://localhost:5000/api/purchases", {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/purchases`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

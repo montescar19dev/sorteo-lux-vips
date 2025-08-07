@@ -68,7 +68,7 @@ const AdminDashboard = () => {
             <Button
               onClick={handleLogout}
               variant="outline"
-              className="border-[#FFD700]/30 hover:bg-[#FFD700]/10"
+              className="border-[#FFD700]/30 hover:bg-[#FFD700]/100"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Cerrar Sesión

@@ -8,7 +8,6 @@ import TermsModal from "@/components/TermsModal";
 import type { RefObject } from "react";
 import { Raffle } from "@/types/Raffle";
 
-
 const Index = () => {
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showCheckTickets, setShowCheckTickets] = useState(false);
@@ -31,8 +30,9 @@ const Index = () => {
     const fetchRaffles = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/raffles/active"
+          `${import.meta.env.VITE_BACKEND_URL}/api/raffles/active`
         );
+
         const data = await response.json();
         setRaffles(data);
       } catch (error) {

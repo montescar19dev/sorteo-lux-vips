@@ -39,7 +39,7 @@ const Navigation = ({
               Inicio
             </button>
             <button
-              onClick={() => scrollToSection("active-raffles")}
+              onClick={() => scrollToSection("hero")}
               className="text-white hover:text-gold-DEFAULT transition-colors font-medium"
             >
               Sorteos Activos

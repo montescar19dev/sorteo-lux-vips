@@ -24,7 +24,6 @@ import ReactCrop, { PercentCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { Raffle } from "@/types/Raffle";
 
-
 const RaffleManagement: React.FC = () => {
   // Rifas y formularios
   const [raffles, setRaffles] = useState<Raffle[]>([]);
@@ -69,9 +68,12 @@ const RaffleManagement: React.FC = () => {
     const fetchRaffles = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:5000/api/raffles", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/api/raffles`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         if (!res.ok) throw new Error("Error al cargar rifas");
         const data: Raffle[] = await res.json();
         setRaffles(data);
@@ -136,8 +138,10 @@ const RaffleManagement: React.FC = () => {
       const isEdit = Boolean(editingRaffle);
       const res = await fetch(
         isEdit
-          ? `http://localhost:5000/api/raffles/${editingRaffle!._id}`
-          : "http://localhost:5000/api/raffles",
+          ? `${import.meta.env.VITE_BACKEND_URL}/api/raffles/${
+              editingRaffle!._id
+            }`
+          : `${import.meta.env.VITE_BACKEND_URL}/api/raffles`,
         {
           method: isEdit ? "PUT" : "POST",
           headers: { Authorization: `Bearer ${token}` },
@@ -183,14 +187,17 @@ const RaffleManagement: React.FC = () => {
     const newStatus = currentStatus === "active" ? "paused" : "active";
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/raffles/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/raffles/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ status: newStatus }),
+        }
+      );
       if (!res.ok) {
         const { message } = await res.json();
         return alert(message);
@@ -222,7 +229,7 @@ const RaffleManagement: React.FC = () => {
       data.append("status", "ended");
       if (winnerFile) data.append("winnerImage", winnerFile);
       const res = await fetch(
-        `http://localhost:5000/api/raffles/${winnerRaffleId}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/raffles/${winnerRaffleId}`,
         {
           method: "PUT",
           headers: { Authorization: `Bearer ${token}` },
@@ -532,7 +539,7 @@ const RaffleManagement: React.FC = () => {
                           if (!pwd) return;
                           const token = localStorage.getItem("token");
                           const res = await fetch(
-                            `http://localhost:5000/api/raffles/${r._id}`,
+                            `${import.meta.env.VITE_BACKEND_URL}/api/raffles/${r._id}`,
                             {
                               method: "DELETE",
                               headers: {

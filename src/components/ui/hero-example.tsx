@@ -44,7 +44,7 @@ const HeroExample: React.FC = () => {
       <div className="max-w-4xl w-full">
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
-            <span className="luxury-text">Sorteo VIP</span>
+            <span className="luxury-text">Sorteo VIPpp</span>
           </h1>
           <p className="text-xl text-gray-300 mb-8">
             Tu oportunidad de ganar premios increíbles
@@ -83,14 +83,14 @@ const HeroExample: React.FC = () => {
             <CardContent className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center space-x-2">
-                  <DollarSign className="h-5 w-5 text-[#D4AA7D]" />
+                  <DollarSign className="h-5 w-5 text-[#FFD700]" />
                   <div>
                     <p className="text-sm text-gray-600">Precio</p>
                     <p className="font-bold">Bs. {currentRaffle.ticketPrice}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Calendar className="h-5 w-5 text-[#D4AA7D]" />
+                  <Calendar className="h-5 w-5 text-[#FFD700]" />
                   <div>
                     <p className="text-sm text-gray-600">Fecha límite</p>
                     <p className="font-bold">{currentRaffle.endDate}</p>
@@ -107,7 +107,7 @@ const HeroExample: React.FC = () => {
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
-                    className="bg-gradient-to-r from-[#D4AA7D] to-[#EFD09E] h-2 rounded-full transition-all duration-300"
+                    className="bg-gradient-to-r from-[#FFC107] to-[#FFD700] h-2 rounded-full transition-all duration-300"
                     style={{ width: `${progress}%` }}
                   ></div>
                 </div>

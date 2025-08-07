@@ -27,7 +27,7 @@ const Footer = () => {
             </h4>
             <div className="flex justify-center gap-6">
               <a 
-                href="https://instagram.com/sorteovip" 
+                href="https://instagram.com/tusorteovip" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 bg-gradient-to-r from-pink-500 to-orange-500 px-6 py-3 rounded-lg hover:scale-105 transition-transform duration-300"
@@ -37,7 +37,7 @@ const Footer = () => {
               </a>
               
               <a 
-                href="https://wa.me/584121234567" 
+                href="https://wa.me/584244491417" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 bg-green-500 px-6 py-3 rounded-lg hover:scale-105 transition-transform duration-300"

@@ -22,20 +22,8 @@ import {
 import { Plus, Edit, Pause, Play, Award, Trash2 } from "lucide-react";
 import ReactCrop, { PercentCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
+import { Raffle } from "@/types/Raffle";
 
-interface Raffle {
-  _id: string;
-  title: string;
-  description: string;
-  ticketPrice: number;
-  totalTickets: number;
-  ticketsSold: number;
-  status: "active" | "paused" | "ended";
-  endDate: string;
-  winner?: string;
-  imageUrl?: string;
-  winnerImage?: string;
-}
 
 const RaffleManagement: React.FC = () => {
   // Rifas y formularios
@@ -49,6 +37,7 @@ const RaffleManagement: React.FC = () => {
     description: "",
     ticketPrice: "",
     totalTickets: "",
+    minTicketsPerUser: "",
     endDate: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -140,6 +129,7 @@ const RaffleManagement: React.FC = () => {
       data.append("description", formData.description);
       data.append("ticketPrice", formData.ticketPrice);
       data.append("totalTickets", formData.totalTickets);
+      data.append("minTicketsPerUser", formData.minTicketsPerUser);
       data.append("endDate", formData.endDate);
       if (rawPrizeFile)
         data.append("prizeImage", rawPrizeFile, rawPrizeFile.name);
@@ -170,6 +160,7 @@ const RaffleManagement: React.FC = () => {
         description: "",
         ticketPrice: "",
         totalTickets: "",
+        minTicketsPerUser: "",
         endDate: "",
       });
       setRawPrizeImage(null);
@@ -328,6 +319,25 @@ const RaffleManagement: React.FC = () => {
                     required
                   />
                 </div>
+                <div>
+                  <Label htmlFor="minTicketsPerUser">
+                    Compra mínima de boletos
+                  </Label>
+                  <Input
+                    id="minTicketsPerUser"
+                    type="number"
+                    min={1}
+                    value={formData.minTicketsPerUser || ""}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        minTicketsPerUser: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+
                 <div>
                   <Label htmlFor="endDate">Fecha Final</Label>
                   <Input
@@ -498,6 +508,9 @@ const RaffleManagement: React.FC = () => {
                             description: r.description,
                             ticketPrice: String(r.ticketPrice),
                             totalTickets: String(r.totalTickets),
+                            minTicketsPerUser: String(
+                              r.minTicketsPerUser || ""
+                            ),
                             endDate: new Date(r.endDate)
                               .toISOString()
                               .slice(0, 10),

@@ -19,14 +19,14 @@ const Navigation = ({
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gold-DEFAULT/20 shadow-lg">
+    <nav className="fixed top-0 left-0 right-0 z-40 bg-[rgba(10,10,10,0.8)] text-white backdrop-blur-sm shadow-lg">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
             <h1 className="text-2xl font-bold">
               <span className="luxury-text">SORTEO</span>
-              <span className="text-primary ml-1">VIP</span>
+              <span className="text-white ml-1">VIP</span>
             </h1>
           </div>
 
@@ -34,19 +34,19 @@ const Navigation = ({
           <div className="hidden md:flex items-center gap-6">
             <button
               onClick={() => scrollToSection("hero")}
-              className="text-primary hover:text-gold-DEFAULT transition-colors font-medium"
+              className="text-white hover:text-gold-DEFAULT transition-colors font-medium"
             >
               Inicio
             </button>
             <button
               onClick={() => scrollToSection("active-raffles")}
-              className="text-primary hover:text-gold-DEFAULT transition-colors font-medium"
+              className="text-white hover:text-gold-DEFAULT transition-colors font-medium"
             >
               Sorteos Activos
             </button>
             <button
               onClick={() => scrollToSection("past-raffles")}
-              className="text-primary hover:text-gold-DEFAULT transition-colors font-medium"
+              className="text-ehite hover:text-gold-DEFAULT transition-colors font-medium"
             >
               Ganadores
             </button>

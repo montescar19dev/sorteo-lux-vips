@@ -34,14 +34,12 @@ import {
   User,
   Hash,
   Mail,
+  ArrowDown,
+  Copy,
+  Clipboard,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
-interface Raffle {
-  _id: string;
-  title: string;
-  ticketPrice: number;
-}
+import { Raffle } from "@/types/Raffle";
 
 interface PaymentWizardProps {
   isOpen: boolean;
@@ -79,6 +77,17 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
   // marca que el usuario ha leído el aviso “Pendiente de verificación”
   const [ackPending, setAckPending] = useState(false);
 
+  const [errors, setErrors] = useState<{
+    fullName?: string;
+    idNumber?: string;
+    phone?: string;
+    email?: string;
+    qty?: string;
+    raffle?: string;
+    reference?: string;
+    screenshot?: string;
+  }>({});
+
   const [userData, setUserData] = useState<UserData>({
     fullName: "",
     idType: "V",
@@ -88,15 +97,20 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
   });
 
   const [selectedRaffle, setSelectedRaffle] = useState<Raffle | null>(null);
-  const [localTicketQuantity, setLocalTicketQuantity] = useState<number>(
-    ticketQuantity || 1
-  );
+  const [localTicketQuantity, setLocalTicketQuantity] = useState<number>(1);
 
   useEffect(() => {
     if (initialRaffle) {
       setSelectedRaffle(initialRaffle);
+      setLocalTicketQuantity(initialRaffle.minTicketsPerUser || 1);
     }
   }, [initialRaffle]);
+
+  useEffect(() => {
+    if (selectedRaffle) {
+      setLocalTicketQuantity(selectedRaffle.minTicketsPerUser || 1);
+    }
+  }, [selectedRaffle]);
 
   const [paymentData, setPaymentData] = useState<PaymentData>({
     reference: "",
@@ -113,13 +127,25 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
 
   // Timer countdown
   useEffect(() => {
-    if (currentStep === 2 && timeLeft > 0) {
+    if (currentStep === 2 && timeLeft === 300) {
+      // Iniciar temporizador en paso 2
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
       return () => clearTimeout(timer);
-    } else if (timeLeft === 0) {
+    } else if (currentStep === 3 && timeLeft === 300) {
+      // Iniciar temporizador en paso 3
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (timeLeft > 0 && (currentStep === 2 || currentStep === 3)) {
+      // Continuar contando en paso 2 o 3
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (timeLeft === 0 && (currentStep === 2 || currentStep === 3)) {
       toast({
         title: "Tiempo agotado",
-        description: "El tiempo para completar el pago ha expirado.",
+        description:
+          currentStep === 2
+            ? "El tiempo para completar el pago ha expirado."
+            : "El tiempo para reportar el pago ha expirado.",
         variant: "destructive",
       });
       onClose();
@@ -148,25 +174,91 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        toast({
+          title: `${label} copiado`,
+          description: `${text} ha sido copiado al portapapeles.`,
+        });
+      })
+      .catch((err) => {
+        console.error("Error al copiar:", err);
+        toast({
+          title: "Error",
+          description: "No se pudo copiar al portapapeles.",
+          variant: "destructive",
+        });
+      });
+  };
+
+  const pasteFromClipboard = () => {
+    navigator.clipboard
+      .readText()
+      .then((text) => {
+        setPaymentData({ ...paymentData, reference: text });
+        setErrors((prev) => ({ ...prev, reference: undefined }));
+        toast({
+          title: "Referencia pegada",
+          description: "El número de referencia ha sido pegado correctamente.",
+        });
+      })
+      .catch((err) => {
+        console.error("Error al pegar desde el portapapeles:", err);
+        toast({
+          title: "Error",
+          description: "No se pudo pegar desde el portapapeles.",
+          variant: "destructive",
+        });
+      });
+  };
+
   const handleStep1Submit = () => {
-    if (
-      !selectedRaffle ||
-      !userData.fullName ||
-      !userData.idNumber ||
-      !userData.phone ||
-      !userData.email
-    ) {
+    const newErrors: typeof errors = {};
+    let hasError = false;
+
+    if (!selectedRaffle) {
+      newErrors.raffle = "Por favor seleccione una rifa.";
+      hasError = true;
+    }
+    if (!userData.fullName) {
+      newErrors.fullName = "El nombre completo es obligatorio.";
+      hasError = true;
+    }
+    if (!userData.idNumber) {
+      newErrors.idNumber = "El número de cédula es obligatorio.";
+      hasError = true;
+    }
+    if (!userData.phone) {
+      newErrors.phone = "El teléfono es obligatorio.";
+      hasError = true;
+    }
+    if (!userData.email) {
+      newErrors.email = "El correo electrónico es obligatorio.";
+      hasError = true;
+    }
+    if (localTicketQuantity < (selectedRaffle?.minTicketsPerUser || 1)) {
+      newErrors.qty = `Debe seleccionar al menos ${selectedRaffle?.minTicketsPerUser} boleto(s).`;
+      hasError = true;
+    }
+
+    if (hasError) {
+      setErrors(newErrors);
       toast({
         title: "Campos requeridos",
-        description: "Por favor complete todos los campos.",
+        description: "Por favor complete todos los campos correctamente.",
         variant: "destructive",
       });
       return;
     }
+
+    setErrors({});
     setCurrentStep(2);
   };
 
   const handleStep2Continue = () => {
+    setTimeLeft(300); // Reiniciar temporizador a 5 minutos
     setCurrentStep(3);
   };
 
@@ -178,19 +270,31 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
   };
 
   const handleStep3Submit = () => {
-    if (!paymentData.reference || !paymentData.screenshot) {
-      toast({
-        title: "Datos incompletos",
-        description: "Por favor ingrese la referencia y suba el comprobante.",
-        variant: "destructive",
-      });
-      return;
+    const newErrors: typeof errors = {};
+    let hasError = false;
+
+    if (!paymentData.reference) {
+      newErrors.reference = "El número de referencia es obligatorio.";
+      hasError = true;
+    }
+    if (!paymentData.screenshot) {
+      newErrors.screenshot = "Debe subir un comprobante de pago.";
+      hasError = true;
+    }
+    if (!selectedRaffle) {
+      newErrors.raffle = "No se ha seleccionado una rifa.";
+      hasError = true;
+    }
+    if (localTicketQuantity < (selectedRaffle?.minTicketsPerUser || 1)) {
+      newErrors.qty = `Debe seleccionar al menos ${selectedRaffle?.minTicketsPerUser} boleto(s).`;
+      hasError = true;
     }
 
-    if (!selectedRaffle) {
+    if (hasError) {
+      setErrors(newErrors);
       toast({
-        title: "Error",
-        description: "No se ha seleccionado una rifa.",
+        title: "Datos incompletos",
+        description: "Por favor complete todos los campos correctamente.",
         variant: "destructive",
       });
       return;
@@ -226,6 +330,7 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
         const generatedTickets = res?.data?.ticketNumbers ?? [];
         setAssignedTickets(generatedTickets);
         setCurrentStep(4);
+        setErrors({});
         toast({
           title: "Compra registrada",
           description: "Su compra ha sido registrada exitosamente.",
@@ -287,6 +392,7 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
           onValueChange={(id) => {
             const raffle = raffles.find((r) => r._id === id) || null;
             setSelectedRaffle(raffle);
+            setErrors((prev) => ({ ...prev, raffle: undefined }));
           }}
         >
           <SelectTrigger>
@@ -300,16 +406,25 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
             ))}
           </SelectContent>
         </Select>
+        {errors.raffle && (
+          <p className="text-red-500 text-sm mt-1">{errors.raffle}</p>
+        )}
       </div>
 
-      {/* --- NUEVO: Cantidad de boletos --- */}
       <div className="mt-4">
         <Label htmlFor="qty">Cantidad de boletos</Label>
         <div className="flex items-center gap-2 mt-1">
           <Button
             type="button"
             variant="outline"
-            onClick={() => setLocalTicketQuantity((q) => (q > 1 ? q - 1 : 1))}
+            onClick={() =>
+              setLocalTicketQuantity((q) =>
+                q > (selectedRaffle?.minTicketsPerUser || 1) ? q - 1 : q
+              )
+            }
+            disabled={
+              localTicketQuantity <= (selectedRaffle?.minTicketsPerUser || 1)
+            }
           >
             -
           </Button>
@@ -317,11 +432,17 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
           <Input
             id="qty"
             type="number"
-            min={1}
+            min={selectedRaffle?.minTicketsPerUser || 1}
             value={localTicketQuantity}
-            onChange={(e) =>
-              setLocalTicketQuantity(Math.max(1, Number(e.target.value)))
-            }
+            onChange={(e) => {
+              setLocalTicketQuantity(
+                Math.max(
+                  selectedRaffle?.minTicketsPerUser || 1,
+                  Number(e.target.value)
+                )
+              );
+              setErrors((prev) => ({ ...prev, qty: undefined }));
+            }}
             className="w-20 text-center"
           />
 
@@ -333,6 +454,14 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
             +
           </Button>
         </div>
+        {selectedRaffle?.minTicketsPerUser > 1 && (
+          <p className="text-sm text-gray-500 mt-1">
+            Mínimo {selectedRaffle.minTicketsPerUser} boleto(s) para esta rifa.
+          </p>
+        )}
+        {errors.qty && (
+          <p className="text-red-500 text-sm mt-1">{errors.qty}</p>
+        )}
       </div>
 
       <div>
@@ -340,12 +469,16 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
         <Input
           id="fullName"
           value={userData.fullName}
-          onChange={(e) =>
-            setUserData({ ...userData, fullName: e.target.value })
-          }
+          onChange={(e) => {
+            setUserData({ ...userData, fullName: e.target.value });
+            setErrors((prev) => ({ ...prev, fullName: undefined }));
+          }}
           placeholder="Ingrese su nombre completo"
           required
         />
+        {errors.fullName && (
+          <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
+        )}
       </div>
 
       <div className="grid grid-cols-3 gap-2">
@@ -371,12 +504,16 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
           <Input
             id="idNumber"
             value={userData.idNumber}
-            onChange={(e) =>
-              setUserData({ ...userData, idNumber: e.target.value })
-            }
+            onChange={(e) => {
+              setUserData({ ...userData, idNumber: e.target.value });
+              setErrors((prev) => ({ ...prev, idNumber: undefined }));
+            }}
             placeholder="12345678"
             required
           />
+          {errors.idNumber && (
+            <p className="text-red-500 text-sm mt-1">{errors.idNumber}</p>
+          )}
         </div>
       </div>
 
@@ -385,10 +522,16 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
         <Input
           id="phone"
           value={userData.phone}
-          onChange={(e) => setUserData({ ...userData, phone: e.target.value })}
+          onChange={(e) => {
+            setUserData({ ...userData, phone: e.target.value });
+            setErrors((prev) => ({ ...prev, phone: undefined }));
+          }}
           placeholder="04121234567"
           required
         />
+        {errors.phone && (
+          <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+        )}
       </div>
 
       <div>
@@ -397,10 +540,16 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
           id="email"
           type="email"
           value={userData.email}
-          onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+          onChange={(e) => {
+            setUserData({ ...userData, email: e.target.value });
+            setErrors((prev) => ({ ...prev, email: undefined }));
+          }}
           placeholder="correo@ejemplo.com"
           required
         />
+        {errors.email && (
+          <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+        )}
       </div>
 
       <Button onClick={handleStep1Submit} className="w-full luxury-button">
@@ -416,7 +565,7 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
           Instrucciones de Pago
         </h3>
         <p className="text-gray-600">
-          Complete el pago móvil en los siguientes datos
+          Completa el pago móvil con los siguientes datos:
         </p>
       </div>
 
@@ -435,23 +584,54 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center">
-            <div className="text-3xl font-bold luxury-text">
-              Bs. {totalAmount.toFixed(2)}
-            </div>
-
-            {typeof usdRate === "number" && (
-              <div className="text-sm text-gray-500 mt-1">
-                ≈ ${(totalAmount / usdRate).toFixed(2)} (BCV)
-              </div>
-            )}
-
+          <div className="text-center space-y-3">
             <p className="text-gray-600">
-              {localTicketQuantity} boleto(s) para {selectedRaffle?.title || ""}
+              <strong>
+                Precio por boleto: Bs.{" "}
+                {selectedRaffle?.ticketPrice.toFixed(2) || "0.00"}
+              </strong>
             </p>
+            <p className="text-gray-600">
+              <strong>{localTicketQuantity} ticket(s)</strong> para{" "}
+              {selectedRaffle?.title || ""}
+            </p>
+            <hr className="border-gray-300" />
+            <div>
+              <p className="text-lg font-semibold text-gray-600">
+                Total a pagar:
+              </p>
+              <div className="text-3xl font-bold luxury-text">
+                Bs. {totalAmount.toFixed(2)}
+              </div>
+              {typeof usdRate === "number" && (
+                <div className="text-sm text-gray-500 mt-1">
+                  ≈ ${(totalAmount / usdRate).toFixed(2)} (BCV)
+                </div>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
+
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+        <p className="text-red-700 font-semibold">
+          ¡Asegúrate de pagar el monto exacto que te indicamos. De lo contrario
+          no podremos validar la información.
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        <p className="text-sm text-gray-600 flex items-center gap-1">
+          1. Realiza el pago móvil con los datos mostrados a continuación:
+          <ArrowDown className="h-4 w-4" />
+        </p>
+        <p className="text-sm text-gray-600">
+          2. Guarde el comprobante de pago. (captura de pantalla)
+        </p>
+        <p className="text-sm text-gray-600">
+          3. Haga clic en "Continuar" para reportar el pago
+        </p>
+      </div>
 
       <Card className="luxury-card">
         <CardHeader>
@@ -461,32 +641,38 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center">
             <span className="font-medium">Banco:</span>
             <span>Banesco (0134)</span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center">
             <span className="font-medium">Teléfono:</span>
-            <span>04127470479</span>
+            <div className="flex items-center gap-2">
+              <span>04248592770</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => copyToClipboard("04248592770", "Teléfono")}
+              >
+                <Copy className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center">
             <span className="font-medium">Cédula:</span>
-            <span>V-31541350</span>
+            <div className="flex items-center gap-2">
+              <span>V-7525076</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => copyToClipboard("7525076", "Cédula")}
+              >
+                <Copy className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
-
-      <div className="space-y-2">
-        <p className="text-sm text-gray-600">
-          1. Realice el pago móvil con los datos mostrados arriba
-        </p>
-        <p className="text-sm text-gray-600">
-          2. Guarde el comprobante de pago
-        </p>
-        <p className="text-sm text-gray-600">
-          3. Haga clic en "Continuar" para reportar el pago
-        </p>
-      </div>
 
       <Button onClick={handleStep2Continue} className="w-full luxury-button">
         Ya realicé el pago - Continuar
@@ -500,18 +686,44 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
         <h3 className="text-lg font-semibold luxury-text">Reportar Pago</h3>
         <p className="text-gray-600">Ingrese los datos de su pago</p>
       </div>
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+        <Clock className="h-6 w-6 text-red-500 mx-auto mb-2" />
+        <p className="text-red-700 font-semibold">
+          Tiempo restante: {formatTime(timeLeft)}
+        </p>
+      </div>
 
       <div>
         <Label htmlFor="reference">Número de Referencia</Label>
-        <Input
-          id="reference"
-          value={paymentData.reference}
-          onChange={(e) =>
-            setPaymentData({ ...paymentData, reference: e.target.value })
-          }
-          placeholder="Ingrese el número de referencia"
-          required
-        />
+        <div className="flex items-center gap-2">
+          <Input
+            id="reference"
+            value={paymentData.reference}
+            onChange={(e) => {
+              setPaymentData({ ...paymentData, reference: e.target.value });
+              setErrors((prev) => ({ ...prev, reference: undefined }));
+            }}
+            placeholder="Ingrese el número de referencia"
+            required
+            className="flex-1"
+          />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={pasteFromClipboard}
+            title="Pegar desde el portapapeles"
+          >
+            <Clipboard className="h-4 w-4" />
+          </Button>
+        </div>
+        {errors.reference && (
+          <p className="text-red-500 text-sm mt-1">{errors.reference}</p>
+        )}
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-2 text-center">
+          <p className="text-red-700 font-semibold">
+            Asegúrate de escribir todos los caracteres del número de referencia.
+          </p>
+        </div>
       </div>
 
       <div>
@@ -523,7 +735,10 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
             type="file"
             id="screenshot"
             accept="image/*"
-            onChange={handleFileUpload}
+            onChange={(e) => {
+              handleFileUpload(e);
+              setErrors((prev) => ({ ...prev, screenshot: undefined }));
+            }}
             className="hidden"
           />
           <label htmlFor="screenshot" className="cursor-pointer">
@@ -535,6 +750,9 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
             <p className="text-green-600 mt-2">
               ✓ Archivo seleccionado: {paymentData.screenshot.name}
             </p>
+          )}
+          {errors.screenshot && (
+            <p className="text-red-500 text-sm mt-1">{errors.screenshot}</p>
           )}
         </div>
       </div>
@@ -663,7 +881,7 @@ const PaymentWizard: React.FC<PaymentWizardProps> = ({
                     key={step}
                     className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
                       step === currentStep
-                        ? "bg-[#D4AA7D] text-white"
+                        ? "bg-[#FFD700] text-white"
                         : step < currentStep
                         ? "bg-green-500 text-white"
                         : "bg-gray-300 text-gray-600"

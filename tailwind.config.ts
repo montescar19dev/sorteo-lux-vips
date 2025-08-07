@@ -1,5 +1,6 @@
 
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
 	darkMode: ["class"],
@@ -27,20 +28,20 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				primary: {
 					DEFAULT: '#272727',
-					foreground: '#EFD09E'
+					foreground: '#FFC107'
 				},
 				secondary: {
-					DEFAULT: '#D4AA7D',
+					DEFAULT: '#FFD700',
 					foreground: '#272727'
 				},
 				accent: {
-					DEFAULT: '#EFD09E',
+					DEFAULT: '#FFC107',
 					foreground: '#272727'
 				},
 				gold: {
-					light: '#EFD09E',
-					DEFAULT: '#D4AA7D',
-					dark: '#B8956A'
+					light: '#FFD700',
+					DEFAULT: '#FFD700',
+					dark: '#e2ad0dff'
 				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
@@ -60,8 +61,8 @@ export default {
 				},
 			},
 			backgroundImage: {
-				'luxury-gradient': 'linear-gradient(135deg, #272727 0%, #D4AA7D 50%, #EFD09E 100%)',
-				'gold-gradient': 'linear-gradient(135deg, #D4AA7D 0%, #EFD09E 100%)',
+				'luxury-gradient': 'linear-gradient(135deg, #272727 0%, #e2ad0dff 50%, #FFD700 100%)',
+				'gold-gradient': 'linear-gradient(135deg, #e2ad0dff 0%, #FFD700 100%)',
 				'dark-gradient': 'linear-gradient(135deg, #000000 0%, #272727 100%)',
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 			},
@@ -109,10 +110,10 @@ export default {
 				},
 				'glow': {
 					'0%, 100%': {
-						boxShadow: '0 0 20px rgba(212, 170, 125, 0.3)'
+						boxShadow: '0 0 20px rgba(248, 186, 14, 0.3)'
 					},
 					'50%': {
-						boxShadow: '0 0 30px rgba(212, 170, 125, 0.6)'
+						boxShadow: '0 0 30px rgba(228, 171, 15, 0.6)'
 					}
 				}
 			},
@@ -125,5 +126,5 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [tailwindcssAnimate],
 } satisfies Config;

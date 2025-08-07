@@ -6,17 +6,8 @@ import CheckTickets from "@/components/CheckTickets";
 import Footer from "@/components/Footer";
 import TermsModal from "@/components/TermsModal";
 import type { RefObject } from "react";
+import { Raffle } from "@/types/Raffle";
 
-interface Raffle {
-  _id: string;
-  title: string;
-  image?: string;
-  description: string;
-  endDate: string;
-  ticketPrice: number;
-  status: "active" | "paused" | "ended";
-  // otros campos si hacen falta
-}
 
 const Index = () => {
   const [showTermsModal, setShowTermsModal] = useState(false);

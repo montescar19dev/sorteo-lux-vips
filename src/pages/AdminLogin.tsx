@@ -39,7 +39,7 @@ const AdminLogin = () => {
       <Card className="w-full max-w-md luxury-card">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <Shield className="h-12 w-12 text-[#D4AA7D]" />
+            <Shield className="h-12 w-12 text-[#FFD700]" />
           </div>
           <CardTitle className="text-2xl font-bold luxury-text">
             Panel de Administración

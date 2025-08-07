@@ -23,10 +23,15 @@ import TransactionViewer from "@/components/TransactionViewer";
 import PurchaseManagement from "@/components/PurchaseManagement";
 import { usePurchases } from "@/api/usePurchases";
 import { Purchase } from "@/types/Purchase";
+import { useStats } from "@/api/useStats";
 
 const AdminDashboard = () => {
   const { admin, logout } = useAdminAuth();
   const { token } = useAdminAuth();
+
+  const statsQuery = useStats(token);
+  const stats = statsQuery.data;
+  const isStatsLoading = statsQuery.isLoading;
 
   const purchaseQuery = usePurchases(token);
   const purchases = purchaseQuery?.data ?? [];
@@ -51,7 +56,7 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#272727] to-[#1a1a1a]">
       {/* Header */}
-      <div className="bg-black/20 border-b border-[#D4AA7D]/20">
+      <div className="bg-black/20 border-b border-[#FFD700]/20">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
@@ -63,7 +68,7 @@ const AdminDashboard = () => {
             <Button
               onClick={handleLogout}
               variant="outline"
-              className="border-[#D4AA7D]/30 hover:bg-[#D4AA7D]/10"
+              className="border-[#FFD700]/30 hover:bg-[#FFD700]/10"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Cerrar Sesión
@@ -98,7 +103,7 @@ const AdminDashboard = () => {
               Transacciones
             </TabsTrigger>
             */}
-            
+
             <TabsTrigger value="stats" className="flex items-center gap-2">
               <Plus className="h-4 w-4" />
               Estadísticas
@@ -133,26 +138,32 @@ const AdminDashboard = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold luxury-text mb-2">
-                      12
+                {isStatsLoading ? (
+                  <p className="text-center text-gray-400">
+                    Cargando estadísticas...
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold luxury-text mb-2">
+                        {stats?.totalRaffles ?? 0}
+                      </div>
+                      <div className="text-gray-600">Sorteos Realizados</div>
                     </div>
-                    <div className="text-gray-600">Sorteos Activos</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold luxury-text mb-2">
-                      1,234
+                    <div className="text-center">
+                      <div className="text-3xl font-bold luxury-text mb-2">
+                        {stats?.totalTickets ?? 0}
+                      </div>
+                      <div className="text-gray-600">Tickets Vendidos</div>
                     </div>
-                    <div className="text-gray-600">Usuarios Registrados</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold luxury-text mb-2">
-                      $45,678
+                    <div className="text-center">
+                      <div className="text-3xl font-bold luxury-text mb-2">
+                        Bs {stats?.totalRevenue?.toLocaleString("es-VE") ?? 0}
+                      </div>
+                      <div className="text-gray-600">Ingresos Totales</div>
                     </div>
-                    <div className="text-gray-600">Ingresos Totales</div>
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

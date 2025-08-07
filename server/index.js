@@ -6,6 +6,8 @@ import adminRoutes from "./routes/adminRoutes.js";
 import purchaseRoutes from "./routes/purchaseRoutes.js";
 import raffleRoutes from "./routes/raffles.js";
 import rateRoutes from "./routes/rateRoutes.js";
+import statsRoutes from "./routes/statsRoutes.js";
+//import userRoutes from './routes/userRoutes.js';
 
 dotenv.config();
 
@@ -23,7 +25,7 @@ app.use(
   cors({
     origin: "http://localhost:8080", // ajusta al dominio/puerto de tu frontend
     credentials: true, // para que pase cookies/headers auth
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
@@ -34,6 +36,8 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/purchases", purchaseRoutes);
 app.use("/api/raffles", raffleRoutes);
 app.use("/api/rates", rateRoutes);
+app.use("/api/stats", statsRoutes);
+//app.use('/api/users', userRoutes);
 
 // ————————————————————————————————
 // Middleware de manejo de errores (incluye Multer fileFilter)

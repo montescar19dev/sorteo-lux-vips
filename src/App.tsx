@@ -11,6 +11,8 @@ import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
+//import StaffLayout from "@/layouts/StaffLayout";
+
 
 const queryClient = new QueryClient();
 
@@ -32,6 +34,7 @@ const App = () => (
                 </ProtectedAdminRoute>
               } 
             />
+            {/*<Route path="/staff/panel/*" element={<StaffLayout />} />*/}
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

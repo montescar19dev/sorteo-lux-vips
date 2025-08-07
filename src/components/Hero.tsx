@@ -7,16 +7,8 @@ import React, {
 import { Clock, Trophy, Ticket, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PaymentWizard from "@/components/PaymentWizard";
+import { Raffle } from "@/types/Raffle";
 
-interface Raffle {
-  _id: string;
-  title: string;
-  imageUrl?: string;
-  description: string;
-  endDate: string;
-  ticketPrice: number;
-  status: "active" | "paused" | "ended";
-}
 
 interface HeroProps {
   raffles: Raffle[];
@@ -88,18 +80,18 @@ const Hero = forwardRef(({ raffles }: HeroProps, ref) => {
     <div className="relative min-h-screen bg-dark-gradient overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-[#D4AA7D] rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-40 h-40 bg-[#EFD09E] rounded-full blur-3xl"></div>
+        <div className="absolute top-20 left-10 w-32 h-32 bg-[#FFD700] rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-40 h-40 bg-[#FFD700] rounded-full blur-3xl"></div>
       </div>
 
       <div className="relative z-10 container mx-auto px-4 py-16">
         {/* Header - Fixed single line title */}
-        <div className="text-center mb-16 animate-fade-in">
+        <div className="text-center mb-5 animate-fade-in">
           <h1 className="text-6xl md:text-8xl font-bold mb-6 flex items-center justify-center gap-4">
             <span className="luxury-text">SORTEO</span>
             <span className="text-white">VIP</span>
           </h1>
-          <p className="text-xl md:text-2xl text-[#EFD09E] font-light max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl text-white font-light max-w-2xl mx-auto">
             Participa en sorteos exclusivos y gana increíbles premios. Tu
             oportunidad de oro está aquí.
           </p>
@@ -107,8 +99,8 @@ const Hero = forwardRef(({ raffles }: HeroProps, ref) => {
 
         {/* Single Large Horizontal Raffle Card */}
         <div className="mb-16 relative">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-            <span className="luxury-text">Sorteo Activo</span>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-5">
+            <span className="text-white">Sorteo Activo</span>
           </h2>
 
           {/* Carousel Container with External Navigation */}
@@ -118,27 +110,27 @@ const Hero = forwardRef(({ raffles }: HeroProps, ref) => {
               <>
                 <button
                   onClick={prevSlide}
-                  className="absolute -left-16 top-1/2 -translate-y-1/2 z-20 bg-[#D4AA7D]/20 hover:bg-[#D4AA7D]/40 backdrop-blur-sm border border-[#D4AA7D]/30 rounded-full p-4 transition-all duration-300 hover:scale-110 shadow-lg hidden md:flex items-center justify-center"
+                  className="absolute -left-16 top-1/2 -translate-y-1/2 z-20 bg-[#FFD700]/20 hover:bg-[#FFD700]/40 backdrop-blur-sm border border-[#FFD700]/30 rounded-full p-4 transition-all duration-300 hover:scale-110 shadow-lg hidden md:flex items-center justify-center"
                 >
-                  <ChevronLeft className="w-6 h-6 text-[#EFD09E]" />
+                  <ChevronLeft className="w-6 h-6 text-[#FFD700]" />
                 </button>
                 <button
                   onClick={nextSlide}
-                  className="absolute -right-16 top-1/2 -translate-y-1/2 z-20 bg-[#D4AA7D]/20 hover:bg-[#D4AA7D]/40 backdrop-blur-sm border border-[#D4AA7D]/30 rounded-full p-4 transition-all duration-300 hover:scale-110 shadow-lg hidden md:flex items-center justify-center"
+                  className="absolute -right-16 top-1/2 -translate-y-1/2 z-20 bg-[#FFD700]/20 hover:bg-[#FFD700]/40 backdrop-blur-sm border border-[#FFD700]/30 rounded-full p-4 transition-all duration-300 hover:scale-110 shadow-lg hidden md:flex items-center justify-center"
                 >
-                  <ChevronRight className="w-6 h-6 text-[#EFD09E]" />
+                  <ChevronRight className="w-6 h-6 text-[#FFD700]" />
                 </button>
               </>
             )}
 
             {/* Large Horizontal Card - Fixed Height */}
-            <div className="bg-[#1D1D1D] rounded-2xl border border-[#D4AA7D]/30 shadow-2xl overflow-hidden animate-fade-in">
+            <div className="bg-[#1D1D1D] rounded-2xl border border-[#FFD700]/30 shadow-2xl overflow-hidden animate-fade-in">
               <div className="flex flex-col md:flex-row h-auto md:h-[420px]">
                 {/* Left Side - Product Image with Golden Glow - Fixed Container */}
                 <div className="relative w-full md:w-1/2 h-64 md:h-full overflow-hidden bg-gradient-to-br from-[#2A2A2A] to-[#1D1D1D] flex items-center justify-center">
                   {/* Golden Glow Effect */}
-                  <div className="absolute inset-0 bg-gradient-radial from-[#D4AA7D]/20 via-transparent to-transparent opacity-60"></div>
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-radial from-[#EFD09E]/30 via-[#D4AA7D]/10 to-transparent rounded-full blur-3xl"></div>
+                  <div className="absolute inset-0 bg-gradient-radial from-[#FFD700]/20 via-transparent to-transparent opacity-60"></div>
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-radial from-[#FFD700]/30 via-[#FFD700]/10 to-transparent rounded-full blur-3xl"></div>
 
                   {/* Product Image - Fixed sizing */}
                   <div className="relative z-10 w-full h-full flex items-center justify-center p-4">
@@ -162,35 +154,35 @@ const Hero = forwardRef(({ raffles }: HeroProps, ref) => {
                 <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center space-y-6">
                   {/* Title and Subtitle */}
                   <div>
-                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                    <h3 className="text-2xl md:text-3xl font-bold text-[#FFC107] mb-2">
                       {currentRaffle.title}
                     </h3>
-                    <p className="text-lg text-[#D4AA7D] font-medium">
+                    <p className="text-lg text-white font-medium">
                       {currentRaffle.description}
                     </p>
                   </div>
 
                   {/* Time Remaining */}
                   <div className="flex items-center gap-3">
-                    <Clock className="w-5 h-5 text-[#EFD09E]" />
-                    <span className="text-[#EFD09E] text-lg font-medium">
+                    <Clock className="w-5 h-5 text-[#FFD700]" />
+                    <span className="text-[#FFC107] text-lg font-medium">
                       Quedan: {calculateTimeRemaining(currentRaffle.endDate)}
                     </span>
                   </div>
 
                   {/* Ticket Price Section */}
                   <div>
-                    <p className="text-[#D4AA7D] text-sm font-medium mb-2">
+                    <p className="text-white text-sm font-medium mb-2">
                       Precio del ticket:
                     </p>
-                    <div className="inline-block bg-gradient-to-r from-[#D4AA7D] to-[#EFD09E] text-[#1D1D1D] px-4 py-2 rounded-full font-bold text-lg shadow-lg">
+                    <div className="inline-block bg-gradient-to-r from-[#FFD700] to-[#e3ab02] text-[#1D1D1D] px-4 py-2 rounded-full font-bold text-lg shadow-lg">
                       {currentRaffle.ticketPrice} Bs.
                     </div>
                   </div>
 
                   {/* Participation Message */}
-                  <div className="bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-[#D4AA7D]/30 rounded-lg p-3">
-                    <p className="text-[#EFD09E] font-medium text-center text-sm">
+                  <div className="bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-[#FFD700]/30 rounded-lg p-3">
+                    <p className="text-white font-medium text-center text-sm">
                       ¡Aún tienes tiempo de participar!
                     </p>
                   </div>
@@ -199,7 +191,7 @@ const Hero = forwardRef(({ raffles }: HeroProps, ref) => {
                   <div className="space-y-3">
                     <Button
                       onClick={() => openPurchaseModalForRaffle(currentRaffle)}
-                      className="w-full bg-gradient-to-r from-[#D4AA7D] to-[#EFD09E] text-[#1D1D1D] hover:…"
+                      className="w-full bg-gradient-to-r from-[#FFD700] to-[#e3ab02] text-[#1D1D1D] hover:…"
                       disabled={currentRaffle.status !== "active"}
                     >
                       <Ticket className="w-5 h-5 mr-2" />
@@ -212,7 +204,7 @@ const Hero = forwardRef(({ raffles }: HeroProps, ref) => {
 
                     <Button
                       variant="outline"
-                      className="w-full border-[#D4AA7D] text-[#D4AA7D] hover:bg-[#D4AA7D]/10 py-3 text-base font-medium"
+                      className="w-full border-[#FFD700] text-black hover:bg-[#FFD700]/100 py-3 text-base font-medium"
                     >
                       Ver Mis Boletos
                     </Button>
@@ -226,15 +218,15 @@ const Hero = forwardRef(({ raffles }: HeroProps, ref) => {
               <div className="flex justify-center gap-4 mt-6 md:hidden">
                 <button
                   onClick={prevSlide}
-                  className="bg-[#D4AA7D]/20 hover:bg-[#D4AA7D]/40 backdrop-blur-sm border border-[#D4AA7D]/30 rounded-full p-3 transition-all duration-300 hover:scale-110 shadow-lg"
+                  className="bg-[#FFD700]/20 hover:bg-[#FFD700]/40 backdrop-blur-sm border border-[#FFD700]/30 rounded-full p-3 transition-all duration-300 hover:scale-110 shadow-lg"
                 >
-                  <ChevronLeft className="w-6 h-6 text-[#EFD09E]" />
+                  <ChevronLeft className="w-6 h-6 text-[#FFD700]" />
                 </button>
                 <button
                   onClick={nextSlide}
-                  className="bg-[#D4AA7D]/20 hover:bg-[#D4AA7D]/40 backdrop-blur-sm border border-[#D4AA7D]/30 rounded-full p-3 transition-all duration-300 hover:scale-110 shadow-lg"
+                  className="bg-[#FFD700]/20 hover:bg-[#FFD700]/40 backdrop-blur-sm border border-[#FFD700]/30 rounded-full p-3 transition-all duration-300 hover:scale-110 shadow-lg"
                 >
-                  <ChevronRight className="w-6 h-6 text-[#EFD09E]" />
+                  <ChevronRight className="w-6 h-6 text-[#FFD700]" />
                 </button>
               </div>
             )}
@@ -248,8 +240,8 @@ const Hero = forwardRef(({ raffles }: HeroProps, ref) => {
                     onClick={() => setCurrentSlide(index)}
                     className={`w-3 h-3 rounded-full transition-all duration-300 ${
                       index === currentSlide
-                        ? "bg-[#D4AA7D] shadow-lg"
-                        : "bg-[#D4AA7D]/30 hover:bg-[#D4AA7D]/60"
+                        ? "bg-[#FFD700] shadow-lg"
+                        : "bg-[#FFD700]/30 hover:bg-[#FFD700]/60"
                     }`}
                   />
                 ))}
@@ -260,25 +252,26 @@ const Hero = forwardRef(({ raffles }: HeroProps, ref) => {
 
         {/* CTA Section */}
         <div className="text-center">
-          <div className="bg-luxury-gradient p-8 rounded-2xl shadow-2xl max-w-4xl mx-auto">
-            <Trophy className="w-16 h-16 text-white mx-auto mb-6" />
-            <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              ¿Listo para Ganar?
-            </h3>
-            <p className="text-xl text-[#EFD09E] mb-8 max-w-2xl mx-auto">
-              Únete a miles de participantes que ya han confiado en Sorteo VIP.
-              Tu premio te está esperando.
-            </p>
-            <Button
-              onClick={() => openPurchaseModal(undefined)}
-              size="lg"
-              className="bg-white text-[#272727] hover:bg-gray-100 font-bold px-8 py-4 text-lg shadow-xl"
-            >
-              <Trophy className="w-5 h-5 mr-2" />
-              Participar Ahora
-            </Button>
-          </div>
-        </div>
+  <div className="relative max-w-4xl mx-auto rounded-2xl overflow-hidden border-[1px] border-[#FFD700] p-8 bg-transparent">
+    <Trophy className="w-16 h-16 text-[#FFD700] mx-auto mb-6" />
+    <h3 className="text-3xl md:text-4xl font-bold text-[#ffffff] mb-4">
+      ¿Listo para Ganar?
+    </h3>
+    <p className="text-xl text-white mb-8 max-w-2xl mx-auto">
+      Únete a miles de participantes que ya han confiado en Sorteo VIP.
+      Tu premio te está esperando.
+    </p>
+    <Button
+      onClick={() => openPurchaseModal(undefined)}
+      size="lg"
+      className="bg-white text-[#272727] hover:bg-gray-100 font-bold px-8 py-4 text-lg shadow-xl"
+    >
+      <Trophy className="w-5 h-5 mr-2" />
+      Participar Ahora
+    </Button>
+  </div>
+</div>
+
       </div>
     </div>
   );

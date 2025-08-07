@@ -1,96 +1,102 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { useAdminAuth } from '@/contexts/useAdminAuth';
-import { Plus, Edit, Trash2, Shield } from 'lucide-react';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { useAdminAuth } from "@/contexts/useAdminAuth";
+import { Plus, Edit, Trash2, Shield } from "lucide-react";
+import { useUsers, useCreateUser, useToggleUserStatus } from "@/api/useUsers";
+import type { User } from "@/types/User";
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: 'user' | 'admin' | 'super_admin';
-  status: 'active' | 'suspended';
-  createdAt: string;
-  totalPurchases: number;
-}
+type Role = "super_admin" | "admin" | "staff";
 
 const UserManagement = () => {
-  const { admin } = useAdminAuth();
-  const [users, setUsers] = useState<User[]>([
-    {
-      id: '1',
-      name: 'Juan Pérez',
-      email: 'juan@example.com',
-      role: 'user',
-      status: 'active',
-      createdAt: '2024-01-15',
-      totalPurchases: 150,
-    },
-    {
-      id: '2',
-      name: 'María García',
-      email: 'maria@example.com',
-      role: 'admin',
-      status: 'active',
-      createdAt: '2024-02-20',
-      totalPurchases: 0,
-    },
-  ]);
+  const { admin, token } = useAdminAuth();
+  const { data: users = [], isLoading } = useUsers(token);
+
+  const createUser = useCreateUser(token);
+  const toggleStatus = useToggleUserStatus(token);
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    role: 'user' as 'user' | 'admin',
-    password: '',
+    name: "",
+    email: "",
+    role: "staff" as Role,
+    password: "",
   });
 
   const handleCreateAdmin = (e: React.FormEvent) => {
     e.preventDefault();
-    const newUser: User = {
-      id: Date.now().toString(),
-      name: formData.name,
-      email: formData.email,
-      role: formData.role,
-      status: 'active',
-      createdAt: new Date().toISOString().split('T')[0],
-      totalPurchases: 0,
-    };
-    
-    setUsers([...users, newUser]);
-    setFormData({ name: '', email: '', role: 'user', password: '' });
-    setShowCreateForm(false);
+
+    createUser.mutate(
+      {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+      },
+      {
+        onSuccess: () => {
+          setFormData({ name: "", email: "", role: "staff", password: "" });
+          setShowCreateForm(false);
+        },
+      }
+    );
   };
 
-  const handleStatusChange = (id: string, newStatus: 'active' | 'suspended') => {
-    setUsers(users.map(user => 
-      user.id === id ? { ...user, status: newStatus } : user
-    ));
+  const handleStatusChange = (
+    id: string,
+    newStatus: "active" | "suspended"
+  ) => {
+    toggleStatus.mutate({ userId: id });
   };
 
   const getRoleBadge = (role: string) => {
     const variants = {
-      user: 'bg-blue-500',
-      admin: 'bg-green-500',
-      super_admin: 'bg-purple-500',
+      staff: "bg-blue-500",
+      admin: "bg-green-500",
+      super_admin: "bg-purple-500",
     };
-    return <Badge className={variants[role as keyof typeof variants]}>{role}</Badge>;
+    return (
+      <Badge className={variants[role as keyof typeof variants]}>{role}</Badge>
+    );
   };
 
   const getStatusBadge = (status: string) => {
     const variants = {
-      active: 'bg-green-500',
-      suspended: 'bg-red-500',
+      active: "bg-green-500",
+      suspended: "bg-red-500",
     };
-    return <Badge className={variants[status as keyof typeof variants]}>{status}</Badge>;
+    return (
+      <Badge className={variants[status as keyof typeof variants]}>
+        {status}
+      </Badge>
+    );
   };
 
-  const canCreateAdmin = admin?.role === 'super_admin';
+  const canCreateAdmin = admin?.role === "super_admin";
 
   return (
     <div className="space-y-6">
@@ -126,7 +132,9 @@ const UserManagement = () => {
                   <Input
                     id="name"
                     value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -136,19 +144,25 @@ const UserManagement = () => {
                     id="email"
                     type="email"
                     value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                     required
                   />
                 </div>
                 <div>
                   <Label htmlFor="role">Rol</Label>
-                  <Select value={formData.role} onValueChange={(value: 'user' | 'admin') => setFormData({...formData, role: value})}>
+                  <Select
+                    value={formData.role}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, role: value as Role })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="admin">Administrador</SelectItem>
-                      <SelectItem value="user">Usuario</SelectItem>
+                      <SelectItem value="staff">Empleado</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -158,7 +172,9 @@ const UserManagement = () => {
                     id="password"
                     type="password"
                     value={formData.password}
-                    onChange={(e) => setFormData({...formData, password: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -202,7 +218,7 @@ const UserManagement = () => {
             </TableHeader>
             <TableBody>
               {users.map((user) => (
-                <TableRow key={user.id}>
+                <TableRow key={user._id}>
                   <TableCell className="font-medium">{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{getRoleBadge(user.role)}</TableCell>
@@ -214,14 +230,16 @@ const UserManagement = () => {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => handleStatusChange(user.id, user.status === 'active' ? 'suspended' : 'active')}
+                        onClick={() =>
+                          handleStatusChange(
+                            user._id,
+                            user.status === "active" ? "suspended" : "active"
+                          )
+                        }
                       >
-                        {user.status === 'active' ? 'Suspender' : 'Activar'}
+                        {user.status === "active" ? "Suspender" : "Activar"}
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                      >
+                      <Button size="sm" variant="outline">
                         <Edit className="h-4 w-4" />
                       </Button>
                     </div>

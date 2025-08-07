@@ -5,6 +5,7 @@ const raffleSchema = new mongoose.Schema(
     title: { type: String, required: true },
     ticketPrice: { type: Number, required: true },
     totalTickets: { type: Number, required: true },
+    minTicketsPerUser: { type: Number, default: 1 },
     endDate: { type: Date, required: true },
     description: { type: String },
     imageUrl: { type: String }, // URL de la imagen en Cloudinary

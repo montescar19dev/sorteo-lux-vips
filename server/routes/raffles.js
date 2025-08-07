@@ -19,8 +19,14 @@ router.post(
       }
 
       // Leer campos de texto
-      const { title, description, ticketPrice, totalTickets, endDate } =
-        req.body;
+      const {
+        title,
+        description,
+        ticketPrice,
+        totalTickets,
+        endDate,
+        minTicketsPerUser,
+      } = req.body;
 
       // Convertir a tipos correctos
       const price = Number(ticketPrice);
@@ -43,6 +49,7 @@ router.post(
         totalTickets: total,
         endDate: endsAt,
         imageUrl,
+        minTicketsPerUser: Number(minTicketsPerUser),
       });
 
       const saved = await newRaffle.save();
@@ -162,6 +169,17 @@ router.put(
         updateData.endDate = endsAt;
       }
 
+      // — Mínimo de tickets por usuario —
+      if (req.body.minTicketsPerUser !== undefined) {
+        const min = Number(req.body.minTicketsPerUser);
+        if (isNaN(min) || min < 1) {
+          return res
+            .status(400)
+            .json({ message: "Mínimo de tickets inválido" });
+        }
+        updateData.minTicketsPerUser = min;
+      }
+
       // — Permitir cambiar status —
       if (req.body.status) {
         const allowed = ["active", "paused", "ended"];
@@ -201,6 +219,5 @@ router.put(
   }
 );
 // ─────────────────────────────────────────────────────────────────────────────
-
 
 export default router;

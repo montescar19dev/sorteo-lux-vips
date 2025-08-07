@@ -27,3 +27,23 @@ export const usePurchases = (token: string | null) => {
   retry: false, // ❌ evita los reintentos infinitos
   });
 };
+
+import axios from "axios";
+
+export const updatePurchaseStatus = async (
+  id: string,
+  status: "pending" | "verified" | "rejected",
+  token: string
+): Promise<Purchase> => {
+  const response = await axios.patch(
+    `${import.meta.env.VITE_API_URL}/api/purchases/${id}/status`,
+    { status },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data.purchase;
+};

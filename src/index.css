@@ -84,18 +84,30 @@
 
 @layer components {
   .luxury-text {
-    @apply bg-gradient-to-r from-[#D4AA7D] to-[#EFD09E] bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-[#FFD700] to-[#e8ae00] bg-clip-text text-transparent;
   }
   
   .luxury-border {
-    @apply border border-[#D4AA7D]/30 shadow-lg shadow-[#D4AA7D]/10;
+    @apply border border-[#FFD700]/30 shadow-lg shadow-[#FFD700]/10;
   }
   
   .luxury-button {
-    @apply bg-gradient-to-r from-[#D4AA7D] to-[#EFD09E] text-[#272727] font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105;
+    @apply bg-gradient-to-r from-[#FFD700] to-[#e8ae00] text-[#272727] font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105;
   }
   
   .luxury-card {
-    @apply bg-white/95 backdrop-blur-sm border border-[#D4AA7D]/20 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300;
+    @apply bg-white/95 backdrop-blur-sm border border-[#FFD700]/20 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300;
+  }
+
+    .luxury-border-strong {
+    @apply border-2 border-transparent rounded-2xl bg-gradient-to-r from-[#D4AA7D] to-[#EFD09E] p-[2px];
+  }
+
+  .luxury-content {
+    @apply bg-black rounded-2xl p-8;
+  }
+
+  .luxury-icon {
+    @apply text-transparent bg-gradient-to-r from-[#D4AA7D] to-[#EFD09E] bg-clip-text;
   }
 }

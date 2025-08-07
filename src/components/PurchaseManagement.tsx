@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Purchase } from "@/types/Purchase";
 import { useAdminAuth } from "@/contexts/useAdminAuth";
-import { usePurchases } from "@/api/usePurchases";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -30,6 +29,8 @@ import {
 } from "@/components/ui/dialog";
 import { CheckCircle, XCircle, Eye, Search, Filter } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { updatePurchaseStatus, usePurchases } from "@/api/usePurchases";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 // Formatea ISO → "dd/mm/yyyy hh:mm"
 const formatDateTime = (iso: string) => {
@@ -49,15 +50,41 @@ const formatDateTime = (iso: string) => {
 const PurchaseManagement = () => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchType, setSearchType] = useState("all"); // all | ticket | name | phone | reference
+
   const [statusFilter, setStatusFilter] = useState<
     "all" | "pending" | "verified" | "rejected"
   >("all");
+
+  const [raffleOptions, setRaffleOptions] = useState<string[]>([]);
+  const [selectedRaffles, setSelectedRaffles] = useState<string[]>([]);
+
   const [selectedPurchase, setSelectedPurchase] = useState<Purchase | null>(
     null
   );
 
   const { token } = useAdminAuth();
   const purchaseQuery = usePurchases(token);
+
+  const queryClient = useQueryClient();
+
+  const { mutate: changeStatus } = useMutation({
+    mutationFn: (params: {
+      id: string;
+      status: "pending" | "verified" | "rejected";
+    }) => updatePurchaseStatus(params.id, params.status, token!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["purchases", token] }); // 🔄 Refresca la tabla
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "No se pudo actualizar el estado de la compra.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const isLoading = purchaseQuery?.isLoading;
   const isError = purchaseQuery?.isError;
@@ -66,6 +93,20 @@ const PurchaseManagement = () => {
   React.useEffect(() => {
     if (purchaseQuery?.data) {
       setPurchases(purchaseQuery.data);
+
+      // Extraer títulos únicos de rifas
+      const uniqueTitles = [
+        ...new Set(
+          purchaseQuery.data
+            .map((p) =>
+              typeof p.raffleId === "object" && p.raffleId !== null
+                ? p.raffleId.title
+                : ""
+            )
+            .filter((title) => title !== "")
+        ),
+      ];
+      setRaffleOptions(uniqueTitles);
     }
   }, [purchaseQuery?.data]);
 
@@ -77,33 +118,49 @@ const PurchaseManagement = () => {
   const filteredPurchases = purchases.filter((purchase) => {
     const term = searchTerm.toLowerCase();
 
-    const matchesSearch =
-      // si raffleId es objeto, usa title; si es string, usa el string; si es falsy, usa ""
-      (
-        typeof purchase.raffleId === "object" && purchase.raffleId !== null
-          ? purchase.raffleId.title
-          : typeof purchase.raffleId === "string"
-          ? purchase.raffleId
-          : ""
-      )
-        .toLowerCase()
-        .includes(term) ||
-      (purchase.fullName || "").toLowerCase().includes(term) ||
-      (purchase.phoneNumber || "").toLowerCase().includes(term) ||
-      (purchase.transactionId || "").toLowerCase().includes(term);
+    const raffleTitle =
+      typeof purchase.raffleId === "object" && purchase.raffleId !== null
+        ? purchase.raffleId.title
+        : "";
+
+    const matchesRaffle =
+      selectedRaffles.length === 0 || selectedRaffles.includes(raffleTitle);
+
+    const matchesSearch = (() => {
+      const term = searchTerm.toLowerCase();
+
+      switch (searchType) {
+        case "ticket":
+          return purchase.ticketNumbers.some((n) => n.toString() === term);
+
+        case "phone":
+          return (purchase.phoneNumber || "").toLowerCase().includes(term);
+
+        case "reference":
+          return (purchase.transactionId || "").toLowerCase().includes(term);
+
+        case "name":
+          return (purchase.fullName || "").toLowerCase().includes(term);
+
+        case "all":
+        default:
+          return (
+            (purchase.fullName || "").toLowerCase().includes(term) ||
+            (purchase.phoneNumber || "").toLowerCase().includes(term) ||
+            (purchase.transactionId || "").toLowerCase().includes(term) ||
+            purchase.ticketNumbers.some((n) => n.toString().includes(term))
+          );
+      }
+    })();
 
     const matchesStatus =
       statusFilter === "all" || purchase.status === statusFilter;
 
-    return matchesSearch && matchesStatus;
+    return matchesRaffle && matchesSearch && matchesStatus;
   });
 
   const handleVerifyPurchase = (id: string) => {
-    setPurchases((prev) =>
-      prev.map((p) =>
-        p._id === id ? { ...p, status: "verified" as const } : p
-      )
-    );
+    changeStatus({ id, status: "verified" });
     toast({
       title: "Compra verificada",
       description: "La compra ha sido verificada exitosamente.",
@@ -111,11 +168,7 @@ const PurchaseManagement = () => {
   };
 
   const handleRejectPurchase = (id: string) => {
-    setPurchases((prev) =>
-      prev.map((p) =>
-        p._id === id ? { ...p, status: "rejected" as const } : p
-      )
-    );
+    changeStatus({ id, status: "rejected" });
     toast({
       title: "Compra rechazada",
       description:
@@ -146,15 +199,47 @@ const PurchaseManagement = () => {
       <div className="flex flex-col md:flex-row justify-between items-start gap-4">
         <h2 className="text-2xl font-bold luxury-text">Gestión de Compras</h2>
         <div className="flex flex-col sm:flex-row gap-2">
-          <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="Buscar por nombre, teléfono o referencia..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-64"
-            />
+          <div className="flex gap-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Input
+                type="text"
+                placeholder="Buscar..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 w-64"
+              />
+            </div>
+            <select
+              value={searchType}
+              onChange={(e) => setSearchType(e.target.value)}
+              className="border px-2 py-2 rounded-md w-48"
+            >
+              <option value="all">Todos</option>
+              <option value="ticket">N° de Boleto</option>
+              <option value="name">Nombre</option>
+              <option value="phone">Teléfono</option>
+              <option value="reference">Referencia</option>
+            </select>
           </div>
+
+          <select
+            value={selectedRaffles[0] || "all"}
+            onChange={(e) =>
+              setSelectedRaffles(
+                e.target.value === "all" ? [] : [e.target.value]
+              )
+            }
+            className="border px-2 py-2 rounded-md w-48"
+          >
+            <option value="all">Todas</option>
+            {raffleOptions.map((title) => (
+              <option key={title} value={title}>
+                {title}
+              </option>
+            ))}
+          </select>
+
           <select
             value={statusFilter}
             onChange={(e) =>
@@ -217,7 +302,6 @@ const PurchaseManagement = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>ID</TableHead>
                   <TableHead>Sorteo</TableHead>
                   <TableHead>Monto</TableHead>
                   <TableHead>Estado</TableHead>
@@ -228,14 +312,10 @@ const PurchaseManagement = () => {
               <TableBody>
                 {filteredPurchases.map((purchase) => (
                   <TableRow key={purchase._id}>
-                    {/* 1) Columna ID */}
-                    <TableCell className="font-mono text-sm">
-                      {purchase._id}
-                    </TableCell>
-
                     {/* 2) Columna Sorteo: si usas populate, purchase.raffleId es el objeto */}
                     <TableCell>
-                      {typeof purchase.raffleId === "object" && purchase.raffleId !== null
+                      {typeof purchase.raffleId === "object" &&
+                      purchase.raffleId !== null
                         ? purchase.raffleId.title
                         : "-"}
                     </TableCell>
@@ -262,7 +342,7 @@ const PurchaseManagement = () => {
                               <Eye className="h-4 w-4" />
                             </Button>
                           </DialogTrigger>
-                          <DialogContent className="max-w-md">
+                          <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto bg-black text-white">
                             <DialogHeader>
                               <DialogTitle>Detalles de la Compra</DialogTitle>
                             </DialogHeader>
@@ -271,14 +351,14 @@ const PurchaseManagement = () => {
                                 {/* Referencia de pago */}
                                 <div>
                                   <Label>Referencia de Pago</Label>
-                                  <p className="font-mono text-sm bg-gray-100 p-2 rounded">
+                                  <p className="font-mono text-sm bg-gray-900 p-2 rounded">
                                     {selectedPurchase.transactionId}
                                   </p>
                                 </div>
                                 {/* Comprobante (imagen) */}
                                 <div>
                                   <Label>Comprobante</Label>
-                                  <div className="bg-gray-100 p-4 rounded text-center">
+                                  <div className="bg-gray-900 p-4 rounded text-center">
                                     <img
                                       src={selectedPurchase.receiptUrl}
                                       alt="Comprobante"
@@ -286,6 +366,31 @@ const PurchaseManagement = () => {
                                     />
                                   </div>
                                 </div>
+
+                                {/* Nombre del comprador */}
+                                <div>
+                                  <Label>Nombre del Comprador</Label>
+                                  <p className="text-sm bg-gray-900 p-2 rounded">
+                                    {selectedPurchase.fullName}
+                                  </p>
+                                </div>
+
+                                {/* Teléfono del comprador */}
+                                <div>
+                                  <Label>Teléfono</Label>
+                                  <a
+                                    href={`https://wa.me/58${selectedPurchase.phoneNumber.replace(
+                                      /^0/,
+                                      ""
+                                    )}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-sm bg-gray-900 p-2 rounded block text-green-600 hover:underline"
+                                  >
+                                    {selectedPurchase.phoneNumber}
+                                  </a>
+                                </div>
+
                                 {/* Números (sólo en el modal) */}
                                 <div>
                                   <Label>Números Asignados</Label>
@@ -294,13 +399,21 @@ const PurchaseManagement = () => {
                                       (t, i) => (
                                         <Badge
                                           key={i}
-                                          className="bg-blue-500 text-white"
+                                          className="bg-gradient-to-r from-[#FFD700] to-[#e3ab02] text-[#1D1D1D]"
+
                                         >
                                           {t}
                                         </Badge>
                                       )
                                     )}
                                   </div>
+                                </div>
+                                {/* ID de la compra */}
+                                <div>
+                                  <Label>ID de la Compra</Label>
+                                  <p className="font-mono text-xs bg-gray-900 p-2 rounded break-all">
+                                    {selectedPurchase._id}
+                                  </p>
                                 </div>
                               </div>
                             )}

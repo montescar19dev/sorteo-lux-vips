@@ -67,7 +67,7 @@ const TermsModal = ({ isOpen, onClose, onAccept }: TermsModalProps) => {
         <p className="text-white">
           Para poder participar en nuestras rifas, el usuario debe completar el formulario de registro con la siguiente información verídica y actualizada:<br />
           <br />
-          • Nombre completo<br />
+          • Nombre y Apellido<br />
           • Número telefónico<br />
           • Correo electrónico<br />
           <br />

@@ -184,7 +184,7 @@ const TermsModal = ({ isOpen, onClose, onAccept }: TermsModalProps) => {
       <div>
         <h3 className="font-bold text-white mb-2">16. POLÍTICA DE REEMBOLSO Y USO DE FONDOS</h3>
         <p className="text-white">
-          Entendemos que pueden surgir imprevistos, pero queremos asegurarnos de que cada participante tenga la mejor experiencia posible. Por esta razón, te informamos que cualquier monto abonado a nuestras cuentas y que posteriormente se solicite como reembolso, no podrá ser devuelto en efectivo. En su lugar, el saldo quedará registrado como un abono disponible, que podrás utilizar para la compra de nuevos tickets en sorteos futuros o para participar en otros eventos dentro de nuestra plataforma. Apreciamos tu comprensión y tu confianza en superifaslatam.com. ¡Seguimos trabajando para ofrecerte las mejores oportunidades de ganar!
+          Entendemos que pueden surgir imprevistos, pero queremos asegurarnos de que cada participante tenga la mejor experiencia posible. Por esta razón, te informamos que cualquier monto abonado a nuestras cuentas y que posteriormente se solicite como reembolso, no podrá ser devuelto en efectivo. En su lugar, el saldo quedará registrado como un abono disponible, que podrás utilizar para la compra de nuevos tickets en sorteos futuros o para participar en otros eventos dentro de nuestra plataforma. Apreciamos tu comprensión y tu confianza en www.tusorteovip.com. ¡Seguimos trabajando para ofrecerte las mejores oportunidades de ganar!
         </p>
       </div>
 

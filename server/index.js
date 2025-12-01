@@ -23,7 +23,8 @@ const MONGO_URI = process.env.MONGO_URI;
 // Configuración de CORS
 const allowedOrigins = [
   "http://localhost:8080", // Para desarrollo local
-  "https://sorteo-lux-vips.vercel.app", // Para producción en Vercel
+  "https://sorteo-lux-vips.vercel.app", // Para producción en Vercel (antiguo)
+  "https://raffle-project-portfolio.vercel.app", // Para producción en Vercel (nuevo)
 ];
 
 app.use(

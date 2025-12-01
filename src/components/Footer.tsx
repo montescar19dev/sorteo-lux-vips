@@ -11,9 +11,9 @@ const Footer = () => {
           {/* Logo */}
           <div className="mb-8">
             <h3 className="text-4xl font-bold">
-              <span className="luxury-text">SORTEO</span>
+              <span className="luxury-text">RAFFLES</span>
               <br />
-              <span className="text-white">VIP</span>
+              <span className="text-white">GOLD</span>
             </h3>
             <p className="text-gold-light mt-2">
               Tu oportunidad de oro
@@ -27,7 +27,7 @@ const Footer = () => {
             </h4>
             <div className="flex justify-center gap-6">
               <a 
-                href="https://instagram.com/tusorteo.vip" 
+                href="https://instagram.com/#" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 bg-gradient-to-r from-pink-500 to-orange-500 px-6 py-3 rounded-lg hover:scale-105 transition-transform duration-300"
@@ -37,7 +37,7 @@ const Footer = () => {
               </a>
               
               <a 
-                href="https://wa.me/584244491417" 
+                href="https://wa.me/584128358529" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 bg-green-500 px-6 py-3 rounded-lg hover:scale-105 transition-transform duration-300"
@@ -64,7 +64,7 @@ const Footer = () => {
           {/* Legal */}
           <div className="border-t border-gold-DEFAULT/30 pt-8">
             <p className="text-sm text-gold-light/80 mb-2">
-              © 2024 Sorteo VIP. Todos los derechos reservados.
+              © 2025 Raffles Gold. Todos los derechos reservados.
             </p>
             <p className="text-xs text-gold-light/60">
               Sorteos realizados de manera transparente y legal en territorio venezolano.

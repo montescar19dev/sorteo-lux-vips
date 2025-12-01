@@ -3,41 +3,35 @@ import { Calendar, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Raffle } from "@/types/Raffle";
 
-
 const PastRaffles = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const rafflesPerPage = 6;
-
-  // estados para datos y modal
   const [pastRaffles, setPastRaffles] = useState<Raffle[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const rafflesPerPage = 6;
 
-  // cargar rifas que ya terminaron
   useEffect(() => {
     const fetchPastRaffles = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/raffles`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Error al cargar rifas");
-        const all: Raffle[] = await res.json();
-        setPastRaffles(all.filter((r) => r.status === "ended"));
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/raffles/ended`);
+        if (!res.ok) {
+          throw new Error(`Error ${res.status}: ${res.statusText}`);
+        }
+        const data: Raffle[] = await res.json();
+        console.log("Rifas finalizadas obtenidas:", data);
+        setPastRaffles(data);
       } catch (err) {
-        console.error(err);
+        console.error("Error al cargar rifas finalizadas:", err);
+        setError("No se pudieron cargar las rifas finalizadas");
       }
     };
     fetchPastRaffles();
   }, []);
 
-  // paginación
   const totalPages = Math.ceil(pastRaffles.length / rafflesPerPage);
   const startIndex = (currentPage - 1) * rafflesPerPage;
-  const displayedRaffles = pastRaffles.slice(
-    startIndex,
-    startIndex + rafflesPerPage
-  );
+  const displayedRaffles = pastRaffles.slice(startIndex, startIndex + rafflesPerPage);
 
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString("es-ES", {
@@ -59,19 +53,18 @@ const PastRaffles = () => {
     <>
       <div className="py-16 relative min-h-screen bg-dark-gradient overflow-hidden">
         <div className="container mx-auto px-4">
-          {/* Encabezado */}
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               <span className="luxury-text">Sorteos</span>
               <span className="text-white"> Realizados</span>
             </h2>
             <p className="text-xl text-gray-50 max-w-2xl mx-auto">
-              Conoce a nuestros ganadores y los increíbles premios que han
-              obtenido
+              Conoce a nuestros ganadores y los increíbles premios que han obtenido
             </p>
           </div>
 
-          {/* Tarjetas */}
+          {error && <div className="text-red-500 text-center mb-4">{error}</div>}
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
             {displayedRaffles.map((raffle, index) => (
               <div
@@ -90,9 +83,7 @@ const PastRaffles = () => {
                   </div>
                 </div>
 
-                <h3 className="text-xl font-bold text-primary mb-2">
-                  {raffle.title}
-                </h3>
+                <h3 className="text-xl font-bold text-primary mb-2">{raffle.title}</h3>
                 <p className="text-gray-600 mb-4">{raffle.description}</p>
 
                 <div className="space-y-2 mb-6">
@@ -115,12 +106,8 @@ const PastRaffles = () => {
                         className="w-12 h-12 rounded-full object-cover border-2 border-white"
                       />
                       <div>
-                        <p className="text-sm text-primary/80 font-medium">
-                          Ganador
-                        </p>
-                        <p className="font-bold text-primary">
-                          {raffle.winner}
-                        </p>
+                        <p className="text-sm text-primary/80 font-medium">Ganador</p>
+                        <p className="font-bold text-primary">{raffle.winner}</p>
                       </div>
                       <Trophy className="w-5 h-5 text-primary ml-auto" />
                     </div>
@@ -137,7 +124,6 @@ const PastRaffles = () => {
             ))}
           </div>
 
-          {/* Paginación */}
           {totalPages > 1 && (
             <div className="flex justify-center gap-2">
               <Button
@@ -175,7 +161,6 @@ const PastRaffles = () => {
         </div>
       </div>
 
-      {/* Modal responsive */}
       {modalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
           <div className="relative">

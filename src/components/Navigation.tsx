@@ -25,8 +25,8 @@ const Navigation = ({
           {/* Logo */}
           <div className="flex items-center">
             <h1 className="text-2xl font-bold">
-              <span className="luxury-text">SORTEO</span>
-              <span className="text-white ml-1">VIP</span>
+              <span className="luxury-text">RAFFLES</span>
+              <span className="text-white ml-1">GOLD</span>
             </h1>
           </div>
 

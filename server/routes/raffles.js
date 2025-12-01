@@ -96,6 +96,19 @@ router.get("/active", async (req, res) => {
   }
 });
 
+// Ruta pública: Obtener rifas finalizadas
+router.get("/ended", async (req, res) => {
+  try {
+    const raffles = await Raffle.find({ status: "ended" }).sort({
+      endDate: -1,
+    });
+    res.json(raffles);
+  } catch (err) {
+    console.error("Error al obtener rifas finalizadas:", err);
+    res.status(500).json({ message: "Error al obtener rifas finalizadas" });
+  }
+});
+
 // ——— Eliminar una rifa (requiere contraseña) ———
 router.delete("/:id", authMiddleware, async (req, res) => {
   const { password } = req.body;

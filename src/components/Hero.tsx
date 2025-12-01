@@ -84,8 +84,8 @@ const Hero = forwardRef(({ raffles }: HeroProps, ref) => {
         {/* Header - Fixed single line title */}
         <div className="text-center mb-5 animate-fade-in">
           <h1 className="text-6xl md:text-8xl font-bold mb-6 flex items-center justify-center gap-4">
-            <span className="luxury-text">SORTEO</span>
-            <span className="text-white">VIP</span>
+            <span className="luxury-text">RAFFLES</span>
+            <span className="text-white">GOLD</span>
           </h1>
           <p className="text-xl md:text-2xl text-white font-light max-w-2xl mx-auto">
             Participa en sorteos exclusivos y gana increíbles premios. Tu

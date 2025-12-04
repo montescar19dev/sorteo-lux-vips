@@ -64,7 +64,7 @@ const Footer = () => {
           {/* Legal */}
           <div className="border-t border-gold-DEFAULT/30 pt-8">
             <p className="text-sm text-gold-light/80 mb-2">
-              © 2025 Raffles Gold. Todos los derechos reservados.
+              © 2025 Raffles Gold. Todos los derechos reservados. Desarrollado por Carlos Montes.
             </p>
             <p className="text-xs text-gold-light/60">
               Sorteos realizados de manera transparente y legal en territorio venezolano.
